@@ -769,7 +769,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
 
     // Update Student Assignments
     const updatedStudents = students.map(s => {
-      if (teacherForm.assignedStudentIds.includes(s.id)) {
+      if (teacherForm.assignedStudentIds?.includes(s.id)) {
         return { ...s, teacher_id: teacherId };
       } else if (s.teacher_id === teacherId) {
         // If it was assigned to this teacher but now it's not in the list
@@ -1010,7 +1010,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
     
     // Check if we need to force update to the new writing curriculum
     let needsUpdate = true;
-    const SEED_VERSION = "v2_comprehensive";
+    const SEED_VERSION = "v3_levels_updated";
     try {
       const savedVersion = localStorage.getItem("aquire_seed_version");
       if (savedVersion === SEED_VERSION && savedModules && savedLessons && savedBanks) {
@@ -1210,8 +1210,8 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
           
           if (starIdx > -1) {
             const updatedStarsData = [...starsData];
-            if (!updatedStarsData[starIdx].skillLessonIds.includes(savedLesson.id)) {
-              updatedStarsData[starIdx].skillLessonIds = [...updatedStarsData[starIdx].skillLessonIds, savedLesson.id];
+            if (!(updatedStarsData[starIdx].skillLessonIds || []).includes(savedLesson.id)) {
+              updatedStarsData[starIdx].skillLessonIds = [...(updatedStarsData[starIdx].skillLessonIds || []), savedLesson.id];
             }
             return { ...p, starsData: updatedStarsData };
           } else {
@@ -1259,8 +1259,8 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
           
           if (starIdx > -1) {
             const updatedStarsData = [...starsData];
-            if (!updatedStarsData[starIdx].skillLessonIds.includes(savedLesson.id)) {
-              updatedStarsData[starIdx].skillLessonIds = [...updatedStarsData[starIdx].skillLessonIds, savedLesson.id];
+            if (!(updatedStarsData[starIdx].skillLessonIds || []).includes(savedLesson.id)) {
+              updatedStarsData[starIdx].skillLessonIds = [...(updatedStarsData[starIdx].skillLessonIds || []), savedLesson.id];
             }
             return { ...p, starsData: updatedStarsData };
           } else {
@@ -2884,7 +2884,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
     );
 
     if (isTeacherModalOpen) {
-      const teacherStudents = students.filter(s => teacherForm.levelIds.includes(s.level_id));
+      const teacherStudents = students.filter(s => (teacherForm.levelIds || []).includes(s.level_id));
       const filteredTeacherStudents = teacherStudents.filter(s => 
         s.name.toLowerCase().includes(studentSearchQuery.toLowerCase()) ||
         s.email.toLowerCase().includes(studentSearchQuery.toLowerCase())
@@ -3010,7 +3010,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                   </label>
                   <div className="flex flex-wrap gap-2 p-6 bg-aquire-grey-light rounded-2xl border border-aquire-border">
                     {levels.map(level => {
-                      const isSelected = teacherForm.levelIds.includes(level.id);
+                      const isSelected = (teacherForm.levelIds || []).includes(level.id);
                       return (
                         <button
                           key={level.id}
@@ -3064,7 +3064,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                       {teacherForm.levelIds.map(levelId => {
                         const level = levels.find(l => l.id === levelId);
                         const levelStudents = studentsByLevel[levelId] || [];
-                        const allSelected = levelStudents.length > 0 && levelStudents.every(s => teacherForm.assignedStudentIds.includes(s.id));
+                        const allSelected = levelStudents.length > 0 && levelStudents.every(s => (teacherForm.assignedStudentIds || []).includes(s.id));
 
                         return (
                           <div key={levelId} className="space-y-3">
@@ -3119,7 +3119,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                                         key={student.id} 
                                         className="hover:bg-aquire-grey-light/30 cursor-pointer transition-colors"
                                         onClick={() => {
-                                          const isSelected = teacherForm.assignedStudentIds.includes(student.id);
+                                          const isSelected = (teacherForm.assignedStudentIds || []).includes(student.id);
                                           if (isSelected) {
                                             setTeacherForm(prev => ({ ...prev, assignedStudentIds: prev.assignedStudentIds.filter(id => id !== student.id) }));
                                           } else {
@@ -3130,7 +3130,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                                         <td className="px-6 py-4">
                                           <input 
                                             type="checkbox" 
-                                            checked={teacherForm.assignedStudentIds.includes(student.id)}
+                                            checked={(teacherForm.assignedStudentIds || []).includes(student.id)}
                                             onChange={() => {}} // Handled by row click
                                             className="rounded border-aquire-border text-aquire-primary pointer-events-none"
                                           />

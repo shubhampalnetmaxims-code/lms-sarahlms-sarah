@@ -145,7 +145,7 @@ export default function LearningPathZigZagPreview({ path, lessons, onClose }: Le
             const starData = path.starsData?.find(s => s.star === starNum);
             const mainLesson = lessons.find(l => l.id === (starData?.mainLessonId || path.starLessons[index]));
             const skillLessons = lessons.filter(l => 
-              (starData?.skillLessonIds.includes(l.id)) || 
+              (starData?.skillLessonIds?.includes(l.id)) || 
               (l.isSkillLesson && l.learningPathId === path.id && l.starNumber === starNum)
             );
 

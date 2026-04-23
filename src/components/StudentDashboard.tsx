@@ -72,7 +72,7 @@ export default function StudentDashboard({
 
   // Filter content based on student's level
   const filteredModules = useMemo(() => 
-    modules.filter(m => m.levelIds.includes(student.level_id)),
+    modules.filter(m => (m.levelIds || []).includes(student.level_id)),
   [modules, student.level_id]);
 
   const filteredLessons = useMemo(() => 
@@ -80,7 +80,7 @@ export default function StudentDashboard({
   [lessons, student.level_id]);
 
   const filteredPaths = useMemo(() => 
-    learningPaths.filter(p => p.levelIds.includes(student.level_id)),
+    learningPaths.filter(p => (p.levelIds || []).includes(student.level_id)),
   [learningPaths, student.level_id]);
 
   const renderOverview = () => (

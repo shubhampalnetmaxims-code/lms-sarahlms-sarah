@@ -233,7 +233,7 @@ export default function App() {
   };
 
   const handleSignupComplete = (user: Teacher | Student) => {
-    const role = (user as any).grade_id ? 'student' : 'teacher';
+    const role = (user as any).level_id ? 'student' : 'teacher';
     setUserRole(role);
     setCurrentUser(user);
     setIsLoggedIn(true);
