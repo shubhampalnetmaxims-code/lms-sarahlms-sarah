@@ -24,14 +24,14 @@ import {
   Layout,
   Database
 } from "lucide-react";
-import { QuestionBank, QuestionBankItem, Grade } from "../types";
+import { QuestionBank, QuestionBankItem, Level } from "../types";
 
 interface QuestionBankModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (bank: Omit<QuestionBank, "id" | "createdAt">) => void;
   editingBank: QuestionBank | null;
-  availableGrades: Grade[];
+  availableLevels: Level[];
 }
 
 const QUESTION_TYPES = [
@@ -43,11 +43,11 @@ const QUESTION_TYPES = [
   { id: 'section', label: 'Section Divider', icon: <Layout size={16} /> },
 ];
 
-export default function QuestionBankModal({ isOpen, onClose, onSave, editingBank, availableGrades }: QuestionBankModalProps) {
+export default function QuestionBankModal({ isOpen, onClose, onSave, editingBank, availableLevels }: QuestionBankModalProps) {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [selectedGradeIds, setSelectedGradeIds] = useState<string[]>([]);
+  const [selectedLevelIds, setSelectedLevelIds] = useState<string[]>([]);
   const [questions, setQuestions] = useState<QuestionBankItem[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -55,13 +55,13 @@ export default function QuestionBankModal({ isOpen, onClose, onSave, editingBank
     if (editingBank) {
       setName(editingBank.name);
       setDescription(editingBank.description);
-      setSelectedGradeIds(editingBank.gradeIds || []);
+      setSelectedLevelIds(editingBank.levelIds || []);
       setQuestions(editingBank.questions);
       setStep(1);
     } else {
       setName("");
       setDescription("");
-      setSelectedGradeIds([]);
+      setSelectedLevelIds([]);
       setQuestions([]);
       setStep(1);
     }
@@ -105,20 +105,20 @@ export default function QuestionBankModal({ isOpen, onClose, onSave, editingBank
     }
   };
 
-  const toggleGrade = (gradeId: string) => {
-    setSelectedGradeIds(prev => 
-      prev.includes(gradeId) 
-        ? prev.filter(id => id !== gradeId)
-        : [...prev, gradeId]
+  const toggleLevel = (id: string) => {
+    setSelectedLevelIds(prev => 
+      prev.includes(id) 
+        ? prev.filter(lid => lid !== id)
+        : [...prev, id]
     );
   };
 
   const handleSave = () => {
-    if (!name.trim() || selectedGradeIds.length === 0) return;
+    if (!name.trim() || selectedLevelIds.length === 0) return;
     onSave({ 
       name, 
       description, 
-      gradeIds: selectedGradeIds,
+      levelIds: selectedLevelIds,
       questions 
     });
     onClose();
@@ -210,24 +210,24 @@ export default function QuestionBankModal({ isOpen, onClose, onSave, editingBank
               </div>
 
               <div className="space-y-4">
-                <label className="text-xs font-bold text-aquire-grey-med uppercase tracking-widest">Assign Grades</label>
+                <label className="text-xs font-bold text-aquire-grey-med uppercase tracking-widest">Assign Levels</label>
                 <div className="flex flex-wrap gap-2">
-                  {availableGrades.map((grade) => (
+                  {availableLevels.map((level) => (
                     <button
-                      key={grade.id}
-                      onClick={() => toggleGrade(grade.id)}
+                      key={level.id}
+                      onClick={() => toggleLevel(level.id)}
                       className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border-2 ${
-                        selectedGradeIds.includes(grade.id)
+                        selectedLevelIds.includes(level.id)
                           ? "bg-aquire-primary border-aquire-primary text-white shadow-md shadow-aquire-primary/20"
                           : "bg-white border-aquire-border text-aquire-grey-med hover:border-aquire-primary/50"
                       }`}
                     >
-                      {grade.name}
+                      {level.name}
                     </button>
                   ))}
                 </div>
-                {selectedGradeIds.length === 0 && (
-                  <p className="text-xs text-red-500 font-medium">Please select at least one grade.</p>
+                {selectedLevelIds.length === 0 && (
+                  <p className="text-xs text-red-500 font-medium">Please select at least one level.</p>
                 )}
               </div>
               
@@ -570,8 +570,8 @@ export default function QuestionBankModal({ isOpen, onClose, onSave, editingBank
           <div className="flex items-center gap-3">
             {step === 1 ? (
               <button
-                onClick={() => name.trim() && selectedGradeIds.length > 0 && setStep(2)}
-                disabled={!name.trim() || selectedGradeIds.length === 0}
+                onClick={() => name.trim() && selectedLevelIds.length > 0 && setStep(2)}
+                disabled={!name.trim() || selectedLevelIds.length === 0}
                 className="flex items-center gap-2 px-8 py-3 bg-aquire-primary text-white rounded-2xl font-bold hover:shadow-lg hover:shadow-aquire-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next Step

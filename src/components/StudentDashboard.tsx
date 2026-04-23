@@ -21,7 +21,7 @@ import {
   Layers,
   Calendar
 } from "lucide-react";
-import { Student, Module, Lesson, LearningPath, Grade, Organization } from "../types";
+import { Student, Module, Lesson, LearningPath, Level, Organization } from "../types";
 import StudentPreview from "./StudentPreview";
 import LearningPathZigZagPreview from "./LearningPathZigZagPreview";
 
@@ -43,7 +43,7 @@ export default function StudentDashboard({
   const [modules, setModules] = useState<Module[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [learningPaths, setLearningPaths] = useState<LearningPath[]>([]);
-  const [grades, setGrades] = useState<Grade[]>([]);
+  const [levels, setLevels] = useState<Level[]>([]);
   const [organization, setOrganization] = useState<Organization | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -56,32 +56,32 @@ export default function StudentDashboard({
     const savedModules = localStorage.getItem("aquire_modules");
     const savedLessons = localStorage.getItem("aquire_lessons");
     const savedPaths = localStorage.getItem("aquire_learning_paths");
-    const savedGrades = localStorage.getItem("aquire_grades");
+    const savedLevels = localStorage.getItem("aquire_levels");
     const savedOrg = localStorage.getItem("aquire_organization");
 
     if (savedModules) setModules(JSON.parse(savedModules));
     if (savedLessons) setLessons(JSON.parse(savedLessons));
     if (savedPaths) setLearningPaths(JSON.parse(savedPaths));
-    if (savedGrades) setGrades(JSON.parse(savedGrades));
+    if (savedLevels) setLevels(JSON.parse(savedLevels));
     if (savedOrg) setOrganization(JSON.parse(savedOrg));
   }, []);
 
-  const studentGrade = useMemo(() => 
-    grades.find(g => g.id === student.grade_id), 
-  [grades, student.grade_id]);
+  const studentLevel = useMemo(() => 
+    levels.find(l => l.id === student.level_id), 
+  [levels, student.level_id]);
 
-  // Filter content based on student's grade
+  // Filter content based on student's level
   const filteredModules = useMemo(() => 
-    modules.filter(m => m.gradeIds.includes(student.grade_id)),
-  [modules, student.grade_id]);
+    modules.filter(m => m.levelIds.includes(student.level_id)),
+  [modules, student.level_id]);
 
   const filteredLessons = useMemo(() => 
-    lessons.filter(l => l.gradeId === student.grade_id),
-  [lessons, student.grade_id]);
+    lessons.filter(l => l.levelId === student.level_id),
+  [lessons, student.level_id]);
 
   const filteredPaths = useMemo(() => 
-    learningPaths.filter(p => p.gradeIds.includes(student.grade_id)),
-  [learningPaths, student.grade_id]);
+    learningPaths.filter(p => p.levelIds.includes(student.level_id)),
+  [learningPaths, student.level_id]);
 
   const renderOverview = () => (
     <div className="space-y-10">
@@ -99,7 +99,7 @@ export default function StudentDashboard({
           <div className="text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
               <span className="px-3 py-1 rounded-full bg-aquire-primary text-white text-[10px] font-black uppercase tracking-widest">
-                {studentGrade?.name || "Grade"}
+                {studentLevel?.name || "Level"}
               </span>
               <span className="flex items-center gap-1 text-amber-400 text-xs font-bold">
                 <Star size={14} fill="currentColor" />
@@ -258,7 +258,7 @@ export default function StudentDashboard({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold text-aquire-black">My Learning</h2>
-          <p className="text-aquire-grey-med">Explore all modules and lessons for {studentGrade?.name}.</p>
+          <p className="text-aquire-grey-med">Explore all modules and lessons for {studentLevel?.name}.</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="relative">
@@ -403,7 +403,7 @@ export default function StudentDashboard({
               <GraduationCap size={14} className="text-aquire-primary" />
               <span>{organization?.name || "Aquire Academy"}</span>
               <ChevronRight size={12} />
-              <span className="text-aquire-primary">{studentGrade?.name}</span>
+              <span className="text-aquire-primary">{studentLevel?.name}</span>
             </div>
             <h1 className="text-4xl font-bold text-aquire-black tracking-tight">
               {activeTab === "dashboard" ? "Dashboard" : 
@@ -416,7 +416,7 @@ export default function StudentDashboard({
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
               <p className="text-sm font-bold text-aquire-black">{student.name}</p>
-              <p className="text-[10px] text-aquire-grey-med font-bold uppercase tracking-widest">{studentGrade?.name}</p>
+              <p className="text-[10px] text-aquire-grey-med font-bold uppercase tracking-widest">{studentLevel?.name}</p>
             </div>
             <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-aquire-border flex items-center justify-center overflow-hidden">
               {student.profile_pic ? (
@@ -436,7 +436,7 @@ export default function StudentDashboard({
             <div className="flex flex-col items-center justify-center py-20 text-center card">
               <ClipboardList size={64} className="text-aquire-primary/20 mb-6" />
               <h3 className="text-2xl font-bold text-aquire-black mb-2">No Assignments Yet</h3>
-              <p className="text-aquire-grey-med max-w-sm">Your teachers haven't assigned any tasks to your grade yet. Check back soon!</p>
+              <p className="text-aquire-grey-med max-w-sm">Your teachers haven't assigned any tasks to your level yet. Check back soon!</p>
             </div>
           )}
           {activeTab === "profile" && (
@@ -450,7 +450,7 @@ export default function StudentDashboard({
                   )}
                 </div>
                 <h3 className="text-3xl font-bold text-aquire-black">{student.name}</h3>
-                <p className="text-aquire-primary font-bold uppercase tracking-widest text-xs mt-1">{studentGrade?.name}</p>
+                <p className="text-aquire-primary font-bold uppercase tracking-widest text-xs mt-1">{studentLevel?.name}</p>
               </div>
 
               <div className="space-y-6">

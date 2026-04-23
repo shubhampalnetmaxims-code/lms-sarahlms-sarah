@@ -1,4 +1,4 @@
-import { Module, Lesson, Chapter, ContentBlock, Grade } from "../types";
+import { Module, Lesson, Chapter, ContentBlock, Level } from "../types";
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -44,7 +44,7 @@ const createDragDropBlock = (paragraph: string, items: string[]): ContentBlock =
   data: { paragraph, items }
 });
 
-const generateChaptersForLesson = (lessonName: string, grade: string): Chapter[] => {
+const generateChaptersForLesson = (lessonName: string, level: string): Chapter[] => {
   return [
     {
       id: generateId(),
@@ -52,7 +52,7 @@ const generateChaptersForLesson = (lessonName: string, grade: string): Chapter[]
       content: "Learn about " + lessonName,
       blocks: [
         createReadingBlock(
-          `<p>Welcome to the lesson on <strong>${lessonName}</strong>. This is an essential topic for ${grade} students.</p><p>Understanding this will help you build a strong foundation in your studies.</p>`,
+          `<p>Welcome to the lesson on <strong>${lessonName}</strong>. This is an essential topic for ${level} students.</p><p>Understanding this will help you build a strong foundation in your studies.</p>`,
           "Example 1, Example 2, Example 3"
         )
       ]
@@ -130,12 +130,12 @@ const generateChaptersForLesson = (lessonName: string, grade: string): Chapter[]
   ];
 };
 
-export const generateSeedData = (availableGrades: Grade[]) => {
+export const generateSeedData = (availableLevels: Level[]) => {
   const modules: Module[] = [];
   const lessons: Lesson[] = [];
 
   const curriculum: Record<string, { name: string, description: string, lessons: string[] }[]> = {
-    "Grade 2": [
+    "Level 2": [
       { 
         name: "Basic English", 
         description: "Foundational English skills for young learners.",
@@ -152,45 +152,45 @@ export const generateSeedData = (availableGrades: Grade[]) => {
         lessons: ["My Family", "Animals & Birds", "Plants Around Us", "Good Habits"]
       }
     ],
-    "Grade 3": [
+    "Level 3": [
       { name: "English: Parts of Speech", description: "Learning nouns, verbs, and adjectives.", lessons: ["Nouns", "Verbs", "Adjectives", "Pronouns"] },
       { name: "Math: Multiplication", description: "Introduction to times tables.", lessons: ["Tables 2-5", "Tables 6-10", "Multiplication Word Problems"] },
       { name: "Science: Environment", description: "Our surroundings and nature.", lessons: ["Air & Water", "Weather", "Pollution"] }
     ],
-    "Grade 4": [
+    "Level 4": [
       { name: "English: Grammar", description: "Advanced sentence structures.", lessons: ["Punctuation", "Conjunctions", "Prepositions"] },
       { name: "Math: Decimals", description: "Introduction to decimal numbers.", lessons: ["Decimal Basics", "Adding Decimals", "Subtracting Decimals"] },
       { name: "Science: Human Body", description: "Learning about our organs.", lessons: ["Digestive System", "Respiratory System", "Skeletal System"] }
     ],
-    "Grade 5": [
+    "Level 5": [
       { name: "English: Tenses", description: "Past, present, and future tenses.", lessons: ["Present Tense", "Past Tense", "Future Tense"] },
       { name: "Math: Percentages", description: "Understanding ratios and percents.", lessons: ["Percentage Basics", "Profit & Loss", "Simple Interest"] },
       { name: "Science: Force & Motion", description: "Basics of physics.", lessons: ["Types of Force", "Friction", "Gravity"] }
     ],
-    "Grade 6": [
+    "Level 6": [
       { name: "English: Advanced Grammar", description: "Clauses and active/passive voice.", lessons: ["Active Voice", "Passive Voice", "Direct Speech"] },
       { name: "Math: Algebra", description: "Introduction to algebraic expressions.", lessons: ["Variables", "Equations", "Inequalities"] },
       { name: "Science: Physics Basics", description: "Light, sound, and electricity.", lessons: ["Light Reflection", "Sound Waves", "Electric Circuits"] }
     ],
-    "Grade 7": [
+    "Level 7": [
       { name: "English: Literature", description: "Analyzing stories and poems.", lessons: ["Poetry Analysis", "Short Story Themes", "Character Development"] },
       { name: "Math: Probability", description: "Likelihood of events.", lessons: ["Probability Basics", "Statistics", "Data Handling"] },
       { name: "Science: Acids & Bases", description: "Introduction to chemistry.", lessons: ["pH Scale", "Neutralization", "Chemical Reactions"] }
     ]
   };
 
-  Object.keys(curriculum).forEach(gradeName => {
-    const gradeObj = availableGrades.find(g => g.name === gradeName);
-    if (!gradeObj) return;
+  Object.keys(curriculum).forEach(levelName => {
+    const levelObj = availableLevels.find(l => l.name === levelName);
+    if (!levelObj) return;
 
-    const gradeModules = curriculum[gradeName] || [];
-    gradeModules.forEach(modData => {
+    const levelModules = curriculum[levelName] || [];
+    levelModules.forEach(modData => {
       const moduleId = generateId();
       modules.push({
         id: moduleId,
         name: modData.name,
         description: modData.description,
-        gradeIds: [gradeObj.id],
+        levelIds: [levelObj.id],
         createdAt: new Date().toISOString()
       });
 
@@ -199,11 +199,11 @@ export const generateSeedData = (availableGrades: Grade[]) => {
         lessons.push({
           id: lessonId,
           moduleId: moduleId,
-          gradeId: gradeObj.id,
+          levelId: levelObj.id,
           name: lessonName,
-          description: "Comprehensive lesson on " + lessonName + " for " + gradeName + ".",
+          description: "Comprehensive lesson on " + lessonName + " for " + levelName + ".",
           thumbnail: `https://picsum.photos/seed/${lessonId}/400/300`,
-          chapters: generateChaptersForLesson(lessonName, gradeName),
+          chapters: generateChaptersForLesson(lessonName, levelName),
           createdAt: new Date().toISOString()
         });
       });

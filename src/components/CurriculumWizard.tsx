@@ -15,7 +15,7 @@ import {
   Check,
   AlertCircle
 } from "lucide-react";
-import { Module, Lesson, Chapter, Grade } from "../types";
+import { Module, Lesson, Chapter, Level } from "../types";
 
 interface CurriculumWizardProps {
   isOpen: boolean;
@@ -29,10 +29,10 @@ interface CurriculumWizardProps {
       chapters: string[]; // only names for now
     }[];
   }) => void;
-  grades: Grade[];
+  levels: Level[];
 }
 
-export default function CurriculumWizard({ isOpen, onClose, onSave, grades }: CurriculumWizardProps) {
+export default function CurriculumWizard({ isOpen, onClose, onSave, levels }: CurriculumWizardProps) {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -40,7 +40,7 @@ export default function CurriculumWizard({ isOpen, onClose, onSave, grades }: Cu
   const [moduleInfo, setModuleInfo] = useState({
     name: "",
     description: "",
-    gradeIds: [] as string[]
+    levelIds: [] as string[]
   });
 
   // Step 2: Lessons count and list
@@ -58,7 +58,7 @@ export default function CurriculumWizard({ isOpen, onClose, onSave, grades }: Cu
     const errs: any = {};
     if (!moduleInfo.name.trim()) errs.moduleName = "Module name is required";
     if (!moduleInfo.description.trim()) errs.moduleDesc = "Description is required";
-    if (moduleInfo.gradeIds.length === 0) errs.grades = "Select at least one grade";
+    if (moduleInfo.levelIds.length === 0) errs.levels = "Select at least one level";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -108,7 +108,7 @@ export default function CurriculumWizard({ isOpen, onClose, onSave, grades }: Cu
     onClose();
     // Reset wizard
     setStep(1);
-    setModuleInfo({ name: "", description: "", gradeIds: [] });
+    setModuleInfo({ name: "", description: "", levelIds: [] });
     setNumLessons(1);
     setLessonsData([{ name: "", description: "", successKPIs: [], chapters: [""] }]);
   };
@@ -146,12 +146,12 @@ export default function CurriculumWizard({ isOpen, onClose, onSave, grades }: Cu
     setLessonsData(updated);
   };
 
-  const toggleGrade = (id: string) => {
+  const toggleLevel = (id: string) => {
     setModuleInfo(prev => ({
       ...prev,
-      gradeIds: prev.gradeIds.includes(id) 
-        ? prev.gradeIds.filter(gid => gid !== id) 
-        : [...prev.gradeIds, id]
+      levelIds: prev.levelIds.includes(id) 
+        ? prev.levelIds.filter(gid => gid !== id) 
+        : [...prev.levelIds, id]
     }));
   };
 
@@ -247,25 +247,25 @@ export default function CurriculumWizard({ isOpen, onClose, onSave, grades }: Cu
                     </div>
 
                     <div className="space-y-3">
-                      <label className="block text-sm font-bold text-aquire-grey-dark ml-1">Select Grades</label>
+                      <label className="block text-sm font-bold text-aquire-grey-dark ml-1">Select Levels</label>
                       <div className="flex flex-wrap gap-2">
-                        {grades.map(grade => (
+                        {levels.map(level => (
                           <button
-                            key={grade.id}
+                            key={level.id}
                             type="button"
-                            onClick={() => toggleGrade(grade.id)}
+                            onClick={() => toggleLevel(level.id)}
                             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border-2 ${
-                              moduleInfo.gradeIds.includes(grade.id)
+                              moduleInfo.levelIds.includes(level.id)
                                 ? "bg-aquire-primary border-aquire-primary text-white shadow-lg"
                                 : "bg-white border-aquire-border text-aquire-grey-med hover:border-aquire-primary/30"
                             }`}
                           >
-                            {moduleInfo.gradeIds.includes(grade.id) && <Check size={14} />}
-                            {grade.name}
+                            {moduleInfo.levelIds.includes(level.id) && <Check size={14} />}
+                            {level.name}
                           </button>
                         ))}
                       </div>
-                      {errors.grades && <p className="text-red-500 text-xs flex items-center gap-1"><AlertCircle size={12}/> {errors.grades}</p>}
+                      {errors.levels && <p className="text-red-500 text-xs flex items-center gap-1"><AlertCircle size={12}/> {errors.levels}</p>}
                     </div>
                   </motion.div>
                 )}

@@ -48,7 +48,7 @@ import {
 import ModuleModal from "./ModuleModal";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import LessonModal from "./LessonModal";
-import { Module, Lesson, Chapter, ContentBlock, LearningPath, QuestionBank, Organization, Grade, Student, Teacher, Invitation, TeacherPermissions } from "../types";
+import { Module, Lesson, Chapter, ContentBlock, LearningPath, QuestionBank, Organization, Level, Student, Teacher, Invitation, TeacherPermissions } from "../types";
 import ChapterModal from "./ChapterModal";
 import ChapterEditor from "./ChapterEditor";
 import StudentPreview from "./StudentPreview";
@@ -71,31 +71,31 @@ const INITIAL_MODULES: Module[] = [
     id: "m1", 
     name: "Advanced English Composition", 
     description: "Master the art of structured writing, advanced grammar, and persuasive techniques for academic excellence.", 
-    gradeIds: ["g4", "g5"], 
+    levelIds: ["g4", "g5"], 
     createdAt: new Date().toISOString() 
   },
   { 
     id: "m2", 
     name: "Foundational Mathematics", 
     description: "Building strong mathematical foundations through interactive problem solving and logical reasoning.", 
-    gradeIds: ["g1", "g2", "g3"], 
+    levelIds: ["g1", "g2", "g3"], 
     createdAt: new Date().toISOString() 
   },
   { 
     id: "m3", 
     name: "Introduction to Life Sciences", 
     description: "Exploring the wonders of the natural world, from microscopic cells to complex ecosystems.", 
-    gradeIds: ["g3", "g4", "g5"], 
+    levelIds: ["g3", "g4", "g5"], 
     createdAt: new Date().toISOString() 
   },
 ];
 
-const INITIAL_GRADES: Grade[] = [
-  { id: "g1", name: "Grade 1", description: "Lower Primary", status: "active", created: new Date().toISOString() },
-  { id: "g2", name: "Grade 2", description: "Lower Primary", status: "active", created: new Date().toISOString() },
-  { id: "g3", name: "Grade 3", description: "Middle Primary", status: "active", created: new Date().toISOString() },
-  { id: "g4", name: "Grade 4", description: "Upper Primary", status: "active", created: new Date().toISOString() },
-  { id: "g5", name: "Grade 5", description: "Upper Primary", status: "active", created: new Date().toISOString() },
+const INITIAL_LEVELS: Level[] = [
+  { id: "g1", name: "Level 1", description: "Lower Primary", status: "active", created: new Date().toISOString() },
+  { id: "g2", name: "Level 2", description: "Lower Primary", status: "active", created: new Date().toISOString() },
+  { id: "g3", name: "Level 3", description: "Middle Primary", status: "active", created: new Date().toISOString() },
+  { id: "g4", name: "Level 4", description: "Upper Primary", status: "active", created: new Date().toISOString() },
+  { id: "g5", name: "Level 5", description: "Upper Primary", status: "active", created: new Date().toISOString() },
 ];
 
 const generateLessons = (): Lesson[] => {
@@ -251,7 +251,7 @@ const generateLessons = (): Lesson[] => {
       const chapters: Chapter[] = [];
       
       const module = INITIAL_MODULES.find(m => m.id === mod.id);
-      const gradeId = module?.gradeIds[lessonIdx % module.gradeIds.length] || "g1";
+      const levelId = module?.levelIds[lessonIdx % module.levelIds.length] || "g1";
 
       chapterTypes.forEach((type, cIdx) => {
         const chapterId = `c-${lessonId}-${cIdx + 1}`;
@@ -263,7 +263,7 @@ const generateLessons = (): Lesson[] => {
       lessons.push({
         id: lessonId,
         moduleId: mod.id,
-        gradeId: gradeId,
+        levelId: levelId,
         name: lessonName,
         description: `A deep dive into ${lessonName}, designed to challenge and inspire students in ${mod.name}.`,
         thumbnail: `https://picsum.photos/seed/${lessonId}/800/600`,
@@ -286,7 +286,7 @@ const INITIAL_QUESTION_BANKS: QuestionBank[] = [
     id: "qb1",
     name: "English Proficiency Benchmark",
     description: "A comprehensive assessment of writing skills, reading comprehension, and grammatical accuracy.",
-    gradeIds: ["g4", "g5"],
+    levelIds: ["g4", "g5"],
     createdAt: new Date().toISOString(),
     questions: [
       { id: "sec1", type: "section", question: "Section A: Grammar & Vocabulary", marks: 0, required: false },
@@ -337,7 +337,7 @@ const INITIAL_QUESTION_BANKS: QuestionBank[] = [
     id: "qb2",
     name: "Mathematics Logic & Reasoning",
     description: "Testing fundamental mathematical concepts and logical deduction capabilities.",
-    gradeIds: ["g1", "g2", "g3"],
+    levelIds: ["g1", "g2", "g3"],
     createdAt: new Date().toISOString(),
     questions: [
       {
@@ -371,7 +371,7 @@ const INITIAL_LEARNING_PATHS: LearningPath[] = [
     name: "The Writer's Journey",
     description: "A gamified path to becoming a master communicator and creative writer.",
     moduleId: "m1",
-    gradeIds: ["g4", "g5"],
+    levelIds: ["g4", "g5"],
     stars: 5,
     starLessons: ["l-m1-1", "l-m1-2", "l-m1-3", null, null],
     starsData: [
@@ -388,7 +388,7 @@ const INITIAL_LEARNING_PATHS: LearningPath[] = [
     name: "Math Explorer",
     description: "Embark on an adventure through the world of numbers and logic.",
     moduleId: "m2",
-    gradeIds: ["g1", "g2", "g3"],
+    levelIds: ["g1", "g2", "g3"],
     stars: 5,
     starLessons: ["l-m2-1", "l-m2-2", "l-m2-3", null, null],
     starsData: [
@@ -464,7 +464,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
   const [teacherForm, setTeacherForm] = useState({ 
     name: "", 
     email: "", 
-    gradeIds: [] as string[],
+    levelIds: [] as string[],
     assignedStudentIds: [] as string[],
     permissions: {
       learning_paths: true,
@@ -483,15 +483,15 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
   const [students, setStudents] = useState<Student[]>([]);
   const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
-  const [studentForm, setStudentForm] = useState({ name: "", email: "", grade_id: "", teacher_id: "" });
+  const [studentForm, setStudentForm] = useState({ name: "", email: "", level_id: "", teacher_id: "" });
 
-  // Grade State
-  const [grades, setGrades] = useState<Grade[]>([]);
-  const [isGradeModalOpen, setIsGradeModalOpen] = useState(false);
-  const [editingGrade, setEditingGrade] = useState<Grade | null>(null);
-  const [gradeForm, setGradeForm] = useState({ name: "", description: "", status: "active" as const });
-  const [manageSchoolTab, setManageSchoolTab] = useState<'profile' | 'grades'>('profile');
-  const [gradeSort, setGradeSort] = useState<{ field: 'name' | 'status', direction: 'asc' | 'desc' }>({ field: 'name', direction: 'asc' });
+  // Level State
+  const [levels, setLevels] = useState<Level[]>([]);
+  const [isLevelModalOpen, setIsLevelModalOpen] = useState(false);
+  const [editingLevel, setEditingLevel] = useState<Level | null>(null);
+  const [levelForm, setLevelForm] = useState({ name: "", description: "", status: "active" as const });
+  const [manageSchoolTab, setManageSchoolTab] = useState<'profile' | 'levels'>('profile');
+  const [levelSort, setLevelSort] = useState<{ field: 'name' | 'status', direction: 'asc' | 'desc' }>({ field: 'name', direction: 'asc' });
 
   useEffect(() => {
     const savedOrg = localStorage.getItem("aquire_organization");
@@ -500,20 +500,20 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
     }
 
     const savedTeachers = localStorage.getItem("aquire_teachers");
-    const savedGrades = localStorage.getItem("aquire_grades");
-    const currentGrades = savedGrades ? JSON.parse(savedGrades) : INITIAL_GRADES;
+    const savedLevels = localStorage.getItem("aquire_levels");
+    const currentLevels = savedLevels ? JSON.parse(savedLevels) : INITIAL_LEVELS;
 
     if (savedTeachers) {
       let parsedTeachers: Teacher[] = JSON.parse(savedTeachers);
       let updated = false;
       
-      // Ensure existing teachers have gradeIds and permissions
+      // Ensure existing teachers have levelIds and permissions
       parsedTeachers = parsedTeachers.map(t => {
         let tUpdated = false;
-        if (!t.gradeIds || t.gradeIds.length === 0) {
+        if (!t.levelIds || t.levelIds.length === 0) {
           tUpdated = true;
-          const randomGrades = currentGrades.slice(0, 2).map((g: Grade) => g.id);
-          t.gradeIds = randomGrades;
+          const randomLevels = currentLevels.slice(0, 2).map((g: Level) => g.id);
+          t.levelIds = randomLevels;
         }
         if (!t.permissions) {
           tUpdated = true;
@@ -545,7 +545,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
           status: 'active', 
           joined: new Date().toISOString(), 
           profile_pic: "https://i.pravatar.cc/150?u=elizabeth", 
-          gradeIds: ["g4", "g5"],
+          levelIds: ["g4", "g5"],
           permissions: {
             learning_paths: true,
             skill_based: true,
@@ -562,7 +562,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
           status: 'active', 
           joined: new Date().toISOString(), 
           profile_pic: "https://i.pravatar.cc/150?u=robert", 
-          gradeIds: ["g1", "g2", "g3"],
+          levelIds: ["g1", "g2", "g3"],
           permissions: {
             learning_paths: true,
             skill_based: true,
@@ -579,7 +579,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
           status: 'active', 
           joined: new Date().toISOString(), 
           profile_pic: "https://i.pravatar.cc/150?u=sophia", 
-          gradeIds: ["g3", "g4", "g5"],
+          levelIds: ["g3", "g4", "g5"],
           permissions: {
             learning_paths: true,
             skill_based: true,
@@ -605,31 +605,31 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
     } else {
       // Seed Data for Students
       const seedStudents: Student[] = [
-        { id: "s1", name: "Rahul Sharma", email: "rahul@school.com", grade_id: "g5", teacher_id: "t1", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=rahul", progress: 80 },
-        { id: "s2", name: "Aanya Gupta", email: "aanya@school.com", grade_id: "g5", teacher_id: "t1", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=aanya", progress: 45 },
-        { id: "s3", name: "Ishaan Verma", email: "ishaan@school.com", grade_id: "g5", teacher_id: "t1", status: "pending", joined: new Date().toISOString(), progress: 0 },
-        { id: "s4", name: "Saanvi Reddy", email: "saanvi@school.com", grade_id: "g5", teacher_id: "t2", status: "active", joined: new Date().toISOString(), progress: 65 },
-        { id: "s5", name: "Arjun Kapoor", email: "arjun@school.com", grade_id: "g5", teacher_id: "t2", status: "inactive", joined: new Date().toISOString(), progress: 30 },
-        { id: "s6", name: "Vivaan Shah", email: "vivaan@school.com", grade_id: "g1", teacher_id: "t2", status: "active", joined: new Date().toISOString(), progress: 90 },
-        { id: "s7", name: "Diya Malhotra", email: "diya@school.com", grade_id: "g1", teacher_id: "t3", status: "active", joined: new Date().toISOString(), progress: 75 },
-        { id: "s8", name: "Kabir Singh", email: "kabir@school.com", grade_id: "g1", teacher_id: "t3", status: "active", joined: new Date().toISOString(), progress: 55 },
-        { id: "s9", name: "Myra Joshi", email: "myra@school.com", grade_id: "g8", status: "pending", joined: new Date().toISOString(), progress: 0 },
-        { id: "s10", name: "Advait Nair", email: "advait@school.com", grade_id: "g8", status: "pending", joined: new Date().toISOString(), progress: 0 },
-        { id: "s11", name: "Kiara Bose", email: "kiara@school.com", grade_id: "g8", status: "pending", joined: new Date().toISOString(), progress: 0 },
-        { id: "s12", name: "Reyansh Goel", email: "reyansh@school.com", grade_id: "g8", status: "pending", joined: new Date().toISOString(), progress: 0 },
-        { id: "s13", name: "Zoya Khan", email: "zoya@school.com", grade_id: "g10", status: "active", joined: new Date().toISOString(), progress: 85 },
-        { id: "s14", name: "Aarav Patel", email: "aarav@school.com", grade_id: "g10", status: "active", joined: new Date().toISOString(), progress: 92 },
-        { id: "s15", name: "Ananya Das", email: "ananya@school.com", grade_id: "g10", status: "active", joined: new Date().toISOString(), progress: 78 },
+        { id: "s1", name: "Rahul Sharma", email: "rahul@school.com", level_id: "g5", teacher_id: "t1", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=rahul", progress: 80 },
+        { id: "s2", name: "Aanya Gupta", email: "aanya@school.com", level_id: "g5", teacher_id: "t1", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=aanya", progress: 45 },
+        { id: "s3", name: "Ishaan Verma", email: "ishaan@school.com", level_id: "g5", teacher_id: "t1", status: "pending", joined: new Date().toISOString(), progress: 0 },
+        { id: "s4", name: "Saanvi Reddy", email: "saanvi@school.com", level_id: "g5", teacher_id: "t2", status: "active", joined: new Date().toISOString(), progress: 65 },
+        { id: "s5", name: "Arjun Kapoor", email: "arjun@school.com", level_id: "g5", teacher_id: "t2", status: "inactive", joined: new Date().toISOString(), progress: 30 },
+        { id: "s6", name: "Vivaan Shah", email: "vivaan@school.com", level_id: "g1", teacher_id: "t2", status: "active", joined: new Date().toISOString(), progress: 90 },
+        { id: "s7", name: "Diya Malhotra", email: "diya@school.com", level_id: "g1", teacher_id: "t3", status: "active", joined: new Date().toISOString(), progress: 75 },
+        { id: "s8", name: "Kabir Singh", email: "kabir@school.com", level_id: "g1", teacher_id: "t3", status: "active", joined: new Date().toISOString(), progress: 55 },
+        { id: "s9", name: "Myra Joshi", email: "myra@school.com", level_id: "g8", status: "pending", joined: new Date().toISOString(), progress: 0 },
+        { id: "s10", name: "Advait Nair", email: "advait@school.com", level_id: "g8", status: "pending", joined: new Date().toISOString(), progress: 0 },
+        { id: "s11", name: "Kiara Bose", email: "kiara@school.com", level_id: "g8", status: "pending", joined: new Date().toISOString(), progress: 0 },
+        { id: "s12", name: "Reyansh Goel", email: "reyansh@school.com", level_id: "g8", status: "pending", joined: new Date().toISOString(), progress: 0 },
+        { id: "s13", name: "Zoya Khan", email: "zoya@school.com", level_id: "g10", status: "active", joined: new Date().toISOString(), progress: 85 },
+        { id: "s14", name: "Aarav Patel", email: "aarav@school.com", level_id: "g10", status: "active", joined: new Date().toISOString(), progress: 92 },
+        { id: "s15", name: "Ananya Das", email: "ananya@school.com", level_id: "g10", status: "active", joined: new Date().toISOString(), progress: 78 },
       ];
       setStudents(seedStudents);
       localStorage.setItem("aquire_students", JSON.stringify(seedStudents));
     }
 
-    if (savedGrades) {
-      setGrades(JSON.parse(savedGrades));
+    if (savedLevels) {
+      setLevels(JSON.parse(savedLevels));
     } else {
-      setGrades(INITIAL_GRADES);
-      localStorage.setItem("aquire_grades", JSON.stringify(INITIAL_GRADES));
+      setLevels(INITIAL_LEVELS);
+      localStorage.setItem("aquire_levels", JSON.stringify(INITIAL_LEVELS));
     }
   }, []);
 
@@ -648,62 +648,62 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
     localStorage.setItem("aquire_students", JSON.stringify(updated));
   };
 
-  const saveGrades = (updated: Grade[]) => {
-    setGrades(updated);
-    localStorage.setItem("aquire_grades", JSON.stringify(updated));
+  const saveLevels = (updated: Level[]) => {
+    setLevels(updated);
+    localStorage.setItem("aquire_levels", JSON.stringify(updated));
   };
 
-  const handleSaveGrade = () => {
-    if (!gradeForm.name) {
-      showToast("Grade name is required", "error");
+  const handleSaveLevel = () => {
+    if (!levelForm.name) {
+      showToast("Level name is required", "error");
       return;
     }
 
     // Check uniqueness
-    const isDuplicate = grades.some(g => 
-      g.name.toLowerCase() === gradeForm.name.toLowerCase() && 
-      (!editingGrade || g.id !== editingGrade.id)
+    const isDuplicate = levels.some(g => 
+      g.name.toLowerCase() === levelForm.name.toLowerCase() && 
+      (!editingLevel || g.id !== editingLevel.id)
     );
 
     if (isDuplicate) {
-      showToast("Grade name must be unique", "error");
+      showToast("Level name must be unique", "error");
       return;
     }
 
-    if (editingGrade) {
-      const updated = grades.map(g => g.id === editingGrade.id ? { ...g, ...gradeForm } : g);
-      saveGrades(updated);
-      showToast("Grade updated successfully", "success");
+    if (editingLevel) {
+      const updated = levels.map(g => g.id === editingLevel.id ? { ...g, ...levelForm } : g);
+      saveLevels(updated);
+      showToast("Level updated successfully", "success");
     } else {
-      const newGrade: Grade = {
+      const newLevel: Level = {
         id: crypto.randomUUID(),
-        ...gradeForm,
+        ...levelForm,
         created: new Date().toISOString()
       };
-      saveGrades([newGrade, ...grades]);
-      showToast("Grade added successfully", "success");
+      saveLevels([newLevel, ...levels]);
+      showToast("Level added successfully", "success");
     }
 
-    setIsGradeModalOpen(false);
-    setEditingGrade(null);
-    setGradeForm({ name: "", description: "", status: "active" });
+    setIsLevelModalOpen(false);
+    setEditingLevel(null);
+    setLevelForm({ name: "", description: "", status: "active" });
   };
 
-  const deleteGrade = (id: string) => {
-    const updated = grades.filter(g => g.id !== id);
-    saveGrades(updated);
-    showToast("Grade removed successfully", "success");
+  const deleteLevel = (id: string) => {
+    const updated = levels.filter(g => g.id !== id);
+    saveLevels(updated);
+    showToast("Level removed successfully", "success");
   };
 
-  const toggleGradeStatus = (id: string) => {
-    const updated = grades.map(g => g.id === id ? { ...g, status: g.status === 'active' ? 'inactive' : 'active' } : g);
-    saveGrades(updated);
+  const toggleLevelStatus = (id: string) => {
+    const updated = levels.map(g => g.id === id ? { ...g, status: g.status === 'active' ? 'inactive' : 'active' } : g);
+    saveLevels(updated);
     showToast("Status updated", "success");
   };
 
   const handleSaveTeacher = () => {
-    if (!teacherForm.name || !teacherForm.email || teacherForm.gradeIds.length === 0) {
-      showToast("Please fill all fields and select at least one grade", "error");
+    if (!teacherForm.name || !teacherForm.email || teacherForm.levelIds.length === 0) {
+      showToast("Please fill all fields and select at least one level", "error");
       return;
     }
 
@@ -742,7 +742,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
         joined: new Date().toISOString(),
         invitation_token: token,
         token_expires: expires.toISOString(),
-        gradeIds: teacherForm.gradeIds,
+        levelIds: teacherForm.levelIds,
         permissions: teacherForm.permissions
       };
 
@@ -756,7 +756,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
         ---
         Hi ${teacherForm.name},
 
-        Welcome to Aquire Academy! You have been assigned to grades: ${teacherForm.gradeIds.map(id => grades.find(g => g.id === id)?.name).join(', ')}.
+        Welcome to Aquire Academy! You have been assigned to levels: ${teacherForm.levelIds.map(id => levels.find(l => l.id === id)?.name).join(', ')}.
 
         Signup: ${inviteLink}
         Expires: ${expires.toLocaleString()}
@@ -782,7 +782,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
     setTeacherForm({ 
       name: "", 
       email: "", 
-      gradeIds: [],
+      levelIds: [],
       assignedStudentIds: [],
       permissions: {
         learning_paths: true,
@@ -820,7 +820,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
 
   // Student Handlers
   const handleSaveStudent = () => {
-    if (!studentForm.name || !studentForm.email || !studentForm.grade_id) {
+    if (!studentForm.name || !studentForm.email || !studentForm.level_id) {
       showToast("Please fill all required fields", "error");
       return;
     }
@@ -851,7 +851,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
         id: crypto.randomUUID(),
         name: studentForm.name,
         email: studentForm.email,
-        grade_id: studentForm.grade_id,
+        level_id: studentForm.level_id,
         teacher_id: studentForm.teacher_id,
         status: 'pending',
         joined: new Date().toISOString(),
@@ -869,7 +869,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
         ---
         Hi ${studentForm.name},
 
-        Welcome to Aquire Academy! You have been invited to join Grade ${grades.find(g => g.id === studentForm.grade_id)?.name}.
+        Welcome to Aquire Academy! You have been invited to join Level ${levels.find(l => l.id === studentForm.level_id)?.name}.
 
         Signup: ${inviteLink}
         Expires: ${expires.toLocaleString()}
@@ -880,7 +880,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
       showToast("Student invitation sent! Link copied.", "success");
     }
     
-    setStudentForm({ name: "", email: "", grade_id: "" });
+    setStudentForm({ name: "", email: "", level_id: "", teacher_id: "" });
     setEditingStudent(null);
     setIsStudentModalOpen(false);
   };
@@ -1025,7 +1025,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
       setLessons(INITIAL_LESSONS);
       setLearningPaths(INITIAL_LEARNING_PATHS);
       setQuestionBanks(INITIAL_QUESTION_BANKS);
-      setGrades(INITIAL_GRADES);
+      setLevels(INITIAL_LEVELS);
       
       const defaultPermissions: TeacherPermissions = {
         learning_paths: false,
@@ -1037,28 +1037,28 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
       };
 
       const seedTeachers: Teacher[] = [
-        { id: "t1", name: "Dr. Elizabeth Smith", email: "elizabeth.smith@aquireglobal.com", status: 'active', joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=elizabeth", gradeIds: ["g4", "g5"], permissions: defaultPermissions },
-        { id: "t2", name: "Prof. Robert Johnson", email: "robert.johnson@aquireglobal.com", status: 'active', joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=robert", gradeIds: ["g1", "g2", "g3"], permissions: defaultPermissions },
-        { id: "t3", name: "Ms. Sophia Williams", email: "sophia.williams@aquireglobal.com", status: 'active', joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=sophia", gradeIds: ["g3", "g4", "g5"], permissions: defaultPermissions },
+        { id: "t1", name: "Dr. Elizabeth Smith", email: "elizabeth.smith@aquireglobal.com", status: 'active', joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=elizabeth", levelIds: ["g4", "g5"], permissions: defaultPermissions },
+        { id: "t2", name: "Prof. Robert Johnson", email: "robert.johnson@aquireglobal.com", status: 'active', joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=robert", levelIds: ["g1", "g2", "g3"], permissions: defaultPermissions },
+        { id: "t3", name: "Ms. Sophia Williams", email: "sophia.williams@aquireglobal.com", status: 'active', joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=sophia", levelIds: ["g3", "g4", "g5"], permissions: defaultPermissions },
       ];
       setTeachers(seedTeachers);
 
       const seedStudents: Student[] = [
-        { id: "s1", name: "Rahul Sharma", email: "rahul@school.com", grade_id: "g5", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=rahul" },
-        { id: "s2", name: "Aanya Gupta", email: "aanya@school.com", grade_id: "g5", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=aanya" },
-        { id: "s3", name: "Ishaan Verma", email: "ishaan@school.com", grade_id: "g5", status: "pending", joined: new Date().toISOString() },
-        { id: "s4", name: "Saanvi Reddy", email: "saanvi@school.com", grade_id: "g5", status: "active", joined: new Date().toISOString() },
-        { id: "s5", name: "Arjun Kapoor", email: "arjun@school.com", grade_id: "g5", status: "inactive", joined: new Date().toISOString() },
-        { id: "s6", name: "Vivaan Shah", email: "vivaan@school.com", grade_id: "g1", status: "active", joined: new Date().toISOString() },
-        { id: "s7", name: "Diya Malhotra", email: "diya@school.com", grade_id: "g1", status: "active", joined: new Date().toISOString() },
-        { id: "s8", name: "Kabir Singh", email: "kabir@school.com", grade_id: "g1", status: "active", joined: new Date().toISOString() },
-        { id: "s9", name: "Myra Joshi", email: "myra@school.com", grade_id: "g8", status: "pending", joined: new Date().toISOString() },
-        { id: "s10", name: "Advait Nair", email: "advait@school.com", grade_id: "g8", status: "pending", joined: new Date().toISOString() },
-        { id: "s11", name: "Kiara Bose", email: "kiara@school.com", grade_id: "g8", status: "pending", joined: new Date().toISOString() },
-        { id: "s12", name: "Reyansh Goel", email: "reyansh@school.com", grade_id: "g8", status: "pending", joined: new Date().toISOString() },
-        { id: "s13", name: "Zoya Khan", email: "zoya@school.com", grade_id: "g10", status: "active", joined: new Date().toISOString() },
-        { id: "s14", name: "Aarav Patel", email: "aarav@school.com", grade_id: "g10", status: "active", joined: new Date().toISOString() },
-        { id: "s15", name: "Ananya Das", email: "ananya@school.com", grade_id: "g10", status: "active", joined: new Date().toISOString() },
+        { id: "s1", name: "Rahul Sharma", email: "rahul@school.com", level_id: "g5", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=rahul" },
+        { id: "s2", name: "Aanya Gupta", email: "aanya@school.com", level_id: "g5", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=aanya" },
+        { id: "s3", name: "Ishaan Verma", email: "ishaan@school.com", level_id: "g5", status: "pending", joined: new Date().toISOString() },
+        { id: "s4", name: "Saanvi Reddy", email: "saanvi@school.com", level_id: "g5", status: "active", joined: new Date().toISOString() },
+        { id: "s5", name: "Arjun Kapoor", email: "arjun@school.com", level_id: "g5", status: "inactive", joined: new Date().toISOString() },
+        { id: "s6", name: "Vivaan Shah", email: "vivaan@school.com", level_id: "g1", status: "active", joined: new Date().toISOString() },
+        { id: "s7", name: "Diya Malhotra", email: "diya@school.com", level_id: "g1", status: "active", joined: new Date().toISOString() },
+        { id: "s8", name: "Kabir Singh", email: "kabir@school.com", level_id: "g1", status: "active", joined: new Date().toISOString() },
+        { id: "s9", name: "Myra Joshi", email: "myra@school.com", level_id: "g8", status: "pending", joined: new Date().toISOString() },
+        { id: "s10", name: "Advait Nair", email: "advait@school.com", level_id: "g8", status: "pending", joined: new Date().toISOString() },
+        { id: "s11", name: "Kiara Bose", email: "kiara@school.com", level_id: "g8", status: "pending", joined: new Date().toISOString() },
+        { id: "s12", name: "Reyansh Goel", email: "reyansh@school.com", level_id: "g8", status: "pending", joined: new Date().toISOString() },
+        { id: "s13", name: "Zoya Khan", email: "zoya@school.com", level_id: "g10", status: "active", joined: new Date().toISOString() },
+        { id: "s14", name: "Aarav Patel", email: "aarav@school.com", level_id: "g10", status: "active", joined: new Date().toISOString() },
+        { id: "s15", name: "Ananya Das", email: "ananya@school.com", level_id: "g10", status: "active", joined: new Date().toISOString() },
       ];
       setStudents(seedStudents);
       
@@ -1076,7 +1076,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
       localStorage.setItem("aquire_lessons", JSON.stringify(INITIAL_LESSONS));
       localStorage.setItem("aquire_learning_paths", JSON.stringify(INITIAL_LEARNING_PATHS));
       localStorage.setItem("aquire_question_banks", JSON.stringify(INITIAL_QUESTION_BANKS));
-      localStorage.setItem("aquire_grades", JSON.stringify(INITIAL_GRADES));
+      localStorage.setItem("aquire_levels", JSON.stringify(INITIAL_LEVELS));
       localStorage.setItem("aquire_teachers", JSON.stringify(seedTeachers));
       localStorage.setItem("aquire_students", JSON.stringify(seedStudents));
       localStorage.setItem("aquire_organization", JSON.stringify(defaultOrg));
@@ -1180,7 +1180,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
       return {
         id: lessonId,
         moduleId: moduleId,
-        gradeId: data.module.gradeIds[0], // assigning first grade by default
+        levelId: data.module.levelIds[0], // assigning first level by default
         name: lessonData.name,
         description: lessonData.description,
         successKPIs: lessonData.successKPIs,
@@ -1684,11 +1684,21 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                       <Layers size={24} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-aquire-black flex items-center gap-2">
+                      <h3 className="font-bold text-aquire-black flex items-center gap-2 flex-wrap">
                         {module.name}
-                        <span className="px-2 py-0.5 bg-aquire-primary/10 text-aquire-primary text-[10px] font-black rounded uppercase tracking-wider">
-                          {moduleLessons.length} Lessons
-                        </span>
+                        <div className="flex gap-2">
+                          <span className="px-2 py-0.5 bg-aquire-primary/10 text-aquire-primary text-[10px] font-black rounded uppercase tracking-wider">
+                            {moduleLessons.length} Lessons
+                          </span>
+                          {module.levelIds?.map(levelId => {
+                            const level = levels.find(g => g.id === levelId);
+                            return level ? (
+                              <span key={levelId} className="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-black rounded uppercase tracking-wider border border-indigo-100">
+                                {level.name}
+                              </span>
+                            ) : null;
+                          })}
+                        </div>
                       </h3>
                       <p className="text-xs text-aquire-grey-med line-clamp-1">{module.description}</p>
                     </div>
@@ -1747,11 +1757,18 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                                       <img src={lesson.thumbnail} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                                     </div>
                                     <div>
-                                      <h4 className="text-sm font-bold text-aquire-grey-dark flex items-center gap-2">
+                                      <h4 className="text-sm font-bold text-aquire-grey-dark flex items-center gap-2 flex-wrap">
                                         {lesson.name}
-                                        <span className="text-[10px] font-medium text-aquire-grey-med">
-                                          ({lesson.chapters?.length || 0} Chapters)
-                                        </span>
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-[10px] font-medium text-aquire-grey-med">
+                                            ({lesson.chapters?.length || 0} Chapters)
+                                          </span>
+                                          {lesson.levelId && (
+                                            <span className="px-1.5 py-0.5 bg-blue-50 text-blue-600 text-[8px] font-black rounded uppercase tracking-wider border border-blue-100">
+                                              {levels.find(g => g.id === lesson.levelId)?.name || "Level"}
+                                            </span>
+                                          )}
+                                        </div>
                                       </h4>
                                       {lesson.successKPIs && lesson.successKPIs.length > 0 && (
                                         <div className="flex flex-wrap gap-1 mt-1">
@@ -1933,7 +1950,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                   </span>
                   <span className="w-1 h-1 rounded-full bg-aquire-grey-med" />
                   <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
-                    {grades.find(g => g.id === lesson.gradeId)?.name || "Grade"}
+                    {levels.find(l => l.id === lesson.levelId)?.name || "Level"}
                   </span>
                 </div>
                 <h3 className="text-base font-bold text-aquire-black truncate group-hover:text-aquire-primary transition-colors">
@@ -2091,7 +2108,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
               <thead>
                 <tr className="border-b border-aquire-border text-aquire-grey-med text-[10px] uppercase tracking-[0.2em] font-bold">
                   <th className="px-6 py-4">Path Details</th>
-                  <th className="px-6 py-4">Grades</th>
+                  <th className="px-6 py-4">Levels</th>
                   <th className="px-6 py-4">Module</th>
                   <th className="px-6 py-4">Stars</th>
                   <th className="px-6 py-4">Lessons</th>
@@ -2117,11 +2134,11 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
-                          {path.gradeIds?.map(gid => {
-                            const g = grades.find(grade => grade.id === gid);
-                            return g ? (
-                              <span key={gid} className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black rounded-md uppercase tracking-wider">
-                                {g.name}
+                          {path.levelIds?.map(lid => {
+                            const l = levels.find(level => level.id === lid);
+                            return l ? (
+                              <span key={lid} className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black rounded-md uppercase tracking-wider">
+                                {l.name}
                               </span>
                             ) : null;
                           })}
@@ -2247,10 +2264,8 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
               <thead>
                 <tr className="border-b border-aquire-border text-aquire-grey-med text-[10px] uppercase tracking-[0.2em] font-bold">
                   <th className="px-6 py-4">Assessment Details</th>
-                  <th className="px-6 py-4">Grades</th>
+                  <th className="px-6 py-4">Levels</th>
                   <th className="px-6 py-4">Questions</th>
-                  <th className="px-6 py-4">Total Marks</th>
-                  <th className="px-6 py-4">Created At</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -2273,23 +2288,11 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
-                          {bank.gradeIds?.map(gid => {
-                            const g = grades.find(grade => grade.id === gid);
-                            return g ? (
-                              <span key={gid} className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black rounded-md uppercase tracking-wider">
-                                {g.name}
-                              </span>
-                            ) : null;
-                          })}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-wrap gap-1">
-                          {bank.gradeIds?.map(gid => {
-                            const g = grades.find(grade => grade.id === gid);
-                            return g ? (
-                              <span key={gid} className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black rounded-md uppercase tracking-wider">
-                                {g.name}
+                          {bank.levelIds?.map(lid => {
+                            const l = levels.find(level => level.id === lid);
+                            return l ? (
+                              <span key={lid} className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black rounded-md uppercase tracking-wider">
+                                {l.name}
                               </span>
                             ) : null;
                           })}
@@ -2545,20 +2548,20 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
     );
   };
 
-  const renderGrades = () => {
-    const filteredGrades = grades.filter(g => 
-      g.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      g.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const renderLevels = () => {
+    const filteredLevels = levels.filter(l => 
+      l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      l.description.toLowerCase().includes(searchQuery.toLowerCase())
     ).sort((a, b) => {
-      if (gradeSort.field === 'name') {
-        return gradeSort.direction === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+      if (levelSort.field === 'name') {
+        return levelSort.direction === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
       } else {
-        return gradeSort.direction === 'asc' ? a.status.localeCompare(b.status) : b.status.localeCompare(a.status);
+        return levelSort.direction === 'asc' ? a.status.localeCompare(b.status) : b.status.localeCompare(a.status);
       }
     });
 
-    const paginatedGrades = filteredGrades.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-    const totalGradePages = Math.ceil(filteredGrades.length / itemsPerPage);
+    const paginatedLevels = filteredLevels.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const totalLevelPages = Math.ceil(filteredLevels.length / itemsPerPage);
 
     return (
       <div className="space-y-6">
@@ -2569,22 +2572,22 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search grades by name or description..." 
+              placeholder="Search levels by name or description..." 
               className="w-full pl-12 pr-4 py-4 input-field"
             />
           </div>
           <div className="flex items-center gap-2">
             <button 
-              onClick={() => setGradeSort(prev => ({ field: 'name', direction: prev.field === 'name' && prev.direction === 'asc' ? 'desc' : 'asc' }))}
-              className={`px-4 py-3 rounded-xl border font-bold text-sm flex items-center gap-2 transition-all ${gradeSort.field === 'name' ? 'bg-aquire-primary/10 border-aquire-primary text-aquire-primary' : 'bg-white border-aquire-border text-aquire-grey-med'}`}
+              onClick={() => setLevelSort(prev => ({ field: 'name', direction: prev.field === 'name' && prev.direction === 'asc' ? 'desc' : 'asc' }))}
+              className={`px-4 py-3 rounded-xl border font-bold text-sm flex items-center gap-2 transition-all ${levelSort.field === 'name' ? 'bg-aquire-primary/10 border-aquire-primary text-aquire-primary' : 'bg-white border-aquire-border text-aquire-grey-med'}`}
             >
-              Name {gradeSort.field === 'name' && (gradeSort.direction === 'asc' ? '▲' : '▼')}
+              Name {levelSort.field === 'name' && (levelSort.direction === 'asc' ? '▲' : '▼')}
             </button>
             <button 
-              onClick={() => setGradeSort(prev => ({ field: 'status', direction: prev.field === 'status' && prev.direction === 'asc' ? 'desc' : 'asc' }))}
-              className={`px-4 py-3 rounded-xl border font-bold text-sm flex items-center gap-2 transition-all ${gradeSort.field === 'status' ? 'bg-aquire-primary/10 border-aquire-primary text-aquire-primary' : 'bg-white border-aquire-border text-aquire-grey-med'}`}
+              onClick={() => setLevelSort(prev => ({ field: 'status', direction: prev.field === 'status' && prev.direction === 'asc' ? 'desc' : 'asc' }))}
+              className={`px-4 py-3 rounded-xl border font-bold text-sm flex items-center gap-2 transition-all ${levelSort.field === 'status' ? 'bg-aquire-primary/10 border-aquire-primary text-aquire-primary' : 'bg-white border-aquire-border text-aquire-grey-med'}`}
             >
-              Status {gradeSort.field === 'status' && (gradeSort.direction === 'asc' ? '▲' : '▼')}
+              Status {levelSort.field === 'status' && (levelSort.direction === 'asc' ? '▲' : '▼')}
             </button>
           </div>
         </div>
@@ -2594,35 +2597,35 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-aquire-grey-light/50 border-b border-aquire-border">
-                  <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Grade Name</th>
+                  <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Level Name</th>
                   <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Description</th>
                   <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Status</th>
                   <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-aquire-border">
-                {paginatedGrades.map((grade) => (
-                  <tr key={grade.id} className="hover:bg-aquire-grey-light/30 transition-colors group">
+                {paginatedLevels.map((level) => (
+                  <tr key={level.id} className="hover:bg-aquire-grey-light/30 transition-colors group">
                     <td className="px-6 py-4">
-                      <p className="font-bold text-aquire-black">{grade.name}</p>
+                      <p className="font-bold text-aquire-black">{level.name}</p>
                     </td>
                     <td className="px-6 py-4 text-sm text-aquire-grey-med">
-                      {grade.description || "No description"}
+                      {level.description || "No description"}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                        grade.status === 'active' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'
+                        level.status === 'active' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'
                       }`}>
-                        {grade.status}
+                        {level.status}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => {
-                            setEditingGrade(grade);
-                            setGradeForm({ name: grade.name, description: grade.description, status: grade.status });
-                            setIsGradeModalOpen(true);
+                            setEditingLevel(level);
+                            setLevelForm({ name: level.name, description: level.description, status: level.status });
+                            setIsLevelModalOpen(true);
                           }}
                           className="p-2 hover:bg-aquire-primary/10 text-aquire-primary rounded-lg transition-all"
                           title="Edit"
@@ -2630,17 +2633,17 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                           <Edit size={18} />
                         </button>
                         <button 
-                          onClick={() => toggleGradeStatus(grade.id)}
+                          onClick={() => toggleLevelStatus(level.id)}
                           className={`p-2 rounded-lg transition-all ${
-                            grade.status === 'active' ? 'hover:bg-red-50 text-red-500' : 'hover:bg-emerald-50 text-emerald-500'
+                            level.status === 'active' ? 'hover:bg-red-50 text-red-500' : 'hover:bg-emerald-50 text-emerald-500'
                           }`}
-                          title={grade.status === 'active' ? "Deactivate" : "Activate"}
+                          title={level.status === 'active' ? "Deactivate" : "Activate"}
                         >
                           <RefreshCw size={18} />
                         </button>
                         <button 
                           onClick={() => {
-                            setItemToDelete({ id: grade.id, type: 'grade', name: grade.name });
+                            setItemToDelete({ id: level.id, type: 'level', name: level.name });
                             setIsDeleteModalOpen(true);
                           }}
                           className="p-2 hover:bg-red-50 text-red-500 rounded-lg transition-all"
@@ -2652,10 +2655,10 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                     </td>
                   </tr>
                 ))}
-                {filteredGrades.length === 0 && (
+                {filteredLevels.length === 0 && (
                   <tr>
                     <td colSpan={4} className="px-6 py-20 text-center text-aquire-grey-med">
-                      No grades found. Add your first grade to get started!
+                      No levels found. Add your first level to get started!
                     </td>
                   </tr>
                 )}
@@ -2664,10 +2667,10 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
           </div>
         </div>
 
-        {totalGradePages > 1 && (
+        {totalLevelPages > 1 && (
           <div className="mt-8 pt-8 border-t border-aquire-border flex items-center justify-between">
             <p className="text-aquire-grey-med text-xs font-bold uppercase tracking-widest">
-              Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredGrades.length)} of {filteredGrades.length}
+              Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredLevels.length)} of {filteredLevels.length}
             </p>
             <div className="flex items-center gap-2">
               <button 
@@ -2678,7 +2681,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                 <ChevronLeft size={20} />
               </button>
               <div className="flex items-center gap-1">
-                {Array.from({ length: totalGradePages }, (_, i) => i + 1).map(page => (
+                {Array.from({ length: totalLevelPages }, (_, i) => i + 1).map(page => (
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
@@ -2693,7 +2696,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                 ))}
               </div>
               <button 
-                disabled={currentPage === totalGradePages}
+                disabled={currentPage === totalLevelPages}
                 onClick={() => setCurrentPage(prev => prev + 1)}
                 className="p-3 bg-white border border-aquire-border rounded-xl text-aquire-grey-med hover:text-aquire-primary disabled:opacity-20 disabled:cursor-not-allowed transition-all shadow-sm"
               >
@@ -2703,15 +2706,15 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
           </div>
         )}
 
-        {/* Grade Modal */}
+        {/* Level Modal */}
         <AnimatePresence>
-          {isGradeModalOpen && (
+          {isLevelModalOpen && (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                onClick={() => setIsGradeModalOpen(false)}
+                onClick={() => setIsLevelModalOpen(false)}
                 className="absolute inset-0 bg-aquire-black/60 backdrop-blur-sm"
               />
               <motion.div
@@ -2724,14 +2727,14 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                   <div className="flex items-center justify-between mb-8">
                     <div>
                       <h3 className="text-2xl font-bold text-aquire-black">
-                        {editingGrade ? 'Edit Grade' : 'Add New Grade'}
+                        {editingLevel ? 'Edit Level' : 'Add New Level'}
                       </h3>
                       <p className="text-aquire-grey-med text-sm">
-                        {editingGrade ? 'Update grade details.' : 'Create a new academic grade.'}
+                        {editingLevel ? 'Update level details.' : 'Create a new academic level.'}
                       </p>
                     </div>
                     <button 
-                      onClick={() => setIsGradeModalOpen(false)}
+                      onClick={() => setIsLevelModalOpen(false)}
                       className="p-2 hover:bg-aquire-grey-light rounded-xl transition-colors"
                     >
                       <X size={20} />
@@ -2740,20 +2743,20 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
 
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <label className="text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Grade Name</label>
+                      <label className="text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Level Name</label>
                       <input 
                         type="text" 
-                        value={gradeForm.name}
-                        onChange={(e) => setGradeForm(prev => ({ ...prev, name: e.target.value }))}
+                        value={levelForm.name}
+                        onChange={(e) => setLevelForm(prev => ({ ...prev, name: e.target.value }))}
                         className="input-field w-full"
-                        placeholder="e.g. Grade 5 or Class 10"
+                        placeholder="e.g. Level 5 or Class 10"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Description</label>
                       <textarea 
-                        value={gradeForm.description}
-                        onChange={(e) => setGradeForm(prev => ({ ...prev, description: e.target.value }))}
+                        value={levelForm.description}
+                        onChange={(e) => setLevelForm(prev => ({ ...prev, description: e.target.value }))}
                         className="input-field w-full min-h-[100px] py-3"
                         placeholder="e.g. Primary level students..."
                       />
@@ -2762,16 +2765,16 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
 
                   <div className="mt-10 flex gap-3">
                     <button 
-                      onClick={() => setIsGradeModalOpen(false)}
+                      onClick={() => setIsLevelModalOpen(false)}
                       className="flex-1 py-4 px-6 border border-aquire-border rounded-2xl font-bold text-aquire-grey-med hover:bg-aquire-grey-light transition-all"
                     >
                       Cancel
                     </button>
                     <button 
-                      onClick={handleSaveGrade}
+                      onClick={handleSaveLevel}
                       className="flex-1 py-4 px-6 bg-aquire-primary text-white rounded-2xl font-bold shadow-lg shadow-aquire-primary/20 hover:bg-aquire-primary-hover transition-all"
                     >
-                      {editingGrade ? 'Update Grade' : 'Add Grade'}
+                      {editingLevel ? 'Update Level' : 'Add Level'}
                     </button>
                   </div>
                 </div>
@@ -2798,12 +2801,12 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
               <span className="text-aquire-primary">Manage School</span>
             </div>
             <h2 className="text-3xl font-bold text-aquire-black">
-              {manageSchoolTab === 'profile' ? 'School Profile' : 'Grade Management'}
+              {manageSchoolTab === 'profile' ? 'School Profile' : 'Level Management'}
             </h2>
             <p className="text-aquire-grey-med">
               {manageSchoolTab === 'profile' 
                 ? "Manage your school's branding, contact information, and security settings."
-                : "Define and manage academic grades and classes for your institution."}
+                : "Define and manage academic levels and classes for your institution."}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -2840,14 +2843,14 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
             ) : (
               <button 
                 onClick={() => {
-                  setEditingGrade(null);
-                  setGradeForm({ name: "", description: "", status: "active" });
-                  setIsGradeModalOpen(true);
+                  setEditingLevel(null);
+                  setLevelForm({ name: "", description: "", status: "active" });
+                  setIsLevelModalOpen(true);
                 }}
                 className="btn-primary"
               >
                 <Plus size={20} />
-                Add Grade
+                Add Level
               </button>
             )}
           </div>
@@ -2862,14 +2865,14 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
             School Profile
           </button>
           <button
-            onClick={() => setManageSchoolTab('grades')}
-            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${manageSchoolTab === 'grades' ? 'bg-white text-aquire-primary shadow-sm' : 'text-aquire-grey-med hover:text-aquire-black'}`}
+            onClick={() => setManageSchoolTab('levels')}
+            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${manageSchoolTab === 'levels' ? 'bg-white text-aquire-primary shadow-sm' : 'text-aquire-grey-med hover:text-aquire-black'}`}
           >
-            Grades
+            Levels
           </button>
         </div>
 
-        {manageSchoolTab === 'profile' ? renderSchoolProfile() : renderGrades()}
+        {manageSchoolTab === 'profile' ? renderSchoolProfile() : renderLevels()}
       </motion.div>
     );
   };
@@ -2881,14 +2884,14 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
     );
 
     if (isTeacherModalOpen) {
-      const teacherStudents = students.filter(s => teacherForm.gradeIds.includes(s.grade_id));
+      const teacherStudents = students.filter(s => teacherForm.levelIds.includes(s.level_id));
       const filteredTeacherStudents = teacherStudents.filter(s => 
         s.name.toLowerCase().includes(studentSearchQuery.toLowerCase()) ||
         s.email.toLowerCase().includes(studentSearchQuery.toLowerCase())
       );
 
-      const studentsByGrade = teacherForm.gradeIds.reduce((acc, gradeId) => {
-        acc[gradeId] = filteredTeacherStudents.filter(s => s.grade_id === gradeId);
+      const studentsByLevel = teacherForm.levelIds.reduce((acc, levelId) => {
+        acc[levelId] = filteredTeacherStudents.filter(s => s.level_id === levelId);
         return acc;
       }, {} as Record<string, Student[]>);
 
@@ -2906,7 +2909,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                 setTeacherForm({
                   name: "",
                   email: "",
-                  gradeIds: [],
+                  levelIds: [],
                   assignedStudentIds: [],
                   permissions: {
                     learning_paths: true,
@@ -2931,7 +2934,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                 <span className="text-aquire-primary">{editingTeacher ? "Edit Teacher" : "Invite Teacher"}</span>
               </div>
               <h2 className="text-3xl font-bold text-aquire-black">{editingTeacher ? "Edit Teacher" : "Invite Teacher"}</h2>
-              <p className="text-aquire-grey-med">{editingTeacher ? "Update teacher profile and grade assignments." : "Send an invitation to join Aquire Academy."}</p>
+              <p className="text-aquire-grey-med">{editingTeacher ? "Update teacher profile and level assignments." : "Send an invitation to join Aquire Academy."}</p>
             </div>
           </div>
 
@@ -3000,22 +3003,22 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                   </div>
                 </div>
 
-                {/* Grade Selection */}
+                {/* Level Selection */}
                 <div className="space-y-4">
                   <label className="text-xs font-black text-aquire-grey-dark uppercase tracking-widest flex items-center gap-1">
-                    Select Grade(s) ✅ <span className="text-red-500">*</span>
+                    Select Level(s) ✅ <span className="text-red-500">*</span>
                   </label>
                   <div className="flex flex-wrap gap-2 p-6 bg-aquire-grey-light rounded-2xl border border-aquire-border">
-                    {grades.map(grade => {
-                      const isSelected = teacherForm.gradeIds.includes(grade.id);
+                    {levels.map(level => {
+                      const isSelected = teacherForm.levelIds.includes(level.id);
                       return (
                         <button
-                          key={grade.id}
+                          key={level.id}
                           onClick={() => {
                             if (isSelected) {
-                              setTeacherForm(prev => ({ ...prev, gradeIds: prev.gradeIds.filter(id => id !== grade.id) }));
+                              setTeacherForm(prev => ({ ...prev, levelIds: prev.levelIds.filter(id => id !== level.id) }));
                             } else {
-                              setTeacherForm(prev => ({ ...prev, gradeIds: [...prev.gradeIds, grade.id] }));
+                              setTeacherForm(prev => ({ ...prev, levelIds: [...prev.levelIds, level.id] }));
                             }
                           }}
                           className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 border ${
@@ -3024,14 +3027,14 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                               : "bg-white text-aquire-grey-med border-aquire-border hover:border-aquire-primary hover:text-aquire-primary"
                           }`}
                         >
-                          {grade.name}
+                          {level.name}
                           {isSelected && <X size={14} className="hover:scale-125 transition-transform" />}
                         </button>
                       );
                     })}
                   </div>
-                  {teacherForm.gradeIds.length === 0 && (
-                    <p className="text-xs text-red-500 font-bold">Please select at least one grade.</p>
+                  {teacherForm.levelIds.length === 0 && (
+                    <p className="text-xs text-red-500 font-bold">Please select at least one level.</p>
                   )}
                 </div>
 
@@ -3054,32 +3057,32 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                   {isFetchingStudents ? (
                     <div className="py-20 flex flex-col items-center justify-center gap-4">
                       <Loader2 className="w-10 h-10 text-aquire-primary animate-spin" />
-                      <p className="text-sm font-bold text-aquire-grey-med">Fetching students for selected grades...</p>
+                      <p className="text-sm font-bold text-aquire-grey-med">Fetching students for selected levels...</p>
                     </div>
-                  ) : teacherForm.gradeIds.length > 0 ? (
+                  ) : teacherForm.levelIds.length > 0 ? (
                     <div className="space-y-6">
-                      {teacherForm.gradeIds.map(gradeId => {
-                        const grade = grades.find(g => g.id === gradeId);
-                        const gradeStudents = studentsByGrade[gradeId] || [];
-                        const allSelected = gradeStudents.length > 0 && gradeStudents.every(s => teacherForm.assignedStudentIds.includes(s.id));
+                      {teacherForm.levelIds.map(levelId => {
+                        const level = levels.find(l => l.id === levelId);
+                        const levelStudents = studentsByLevel[levelId] || [];
+                        const allSelected = levelStudents.length > 0 && levelStudents.every(s => teacherForm.assignedStudentIds.includes(s.id));
 
                         return (
-                          <div key={gradeId} className="space-y-3">
+                          <div key={levelId} className="space-y-3">
                             <div className="flex items-center justify-between px-2">
                               <h4 className="font-bold text-aquire-grey-dark flex items-center gap-2">
                                 <span className="w-2 h-2 bg-aquire-primary rounded-full" />
-                                {grade?.name} ({gradeStudents.length} students)
+                                {level?.name} ({levelStudents.length} students)
                               </h4>
-                              {gradeStudents.length > 0 && (
+                              {levelStudents.length > 0 && (
                                 <button
                                   onClick={() => {
                                     if (allSelected) {
                                       setTeacherForm(prev => ({
                                         ...prev,
-                                        assignedStudentIds: prev.assignedStudentIds.filter(id => !gradeStudents.some(s => s.id === id))
+                                        assignedStudentIds: prev.assignedStudentIds.filter(id => !levelStudents.some(s => s.id === id))
                                       }));
                                     } else {
-                                      const newIds = [...new Set([...teacherForm.assignedStudentIds, ...gradeStudents.map(s => s.id)])];
+                                      const newIds = [...new Set([...teacherForm.assignedStudentIds, ...levelStudents.map(s => s.id)])];
                                       setTeacherForm(prev => ({ ...prev, assignedStudentIds: newIds }));
                                     }
                                   }}
@@ -3109,7 +3112,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                                   </tr>
                                 </thead>
                                 <tbody className="divide-y divide-aquire-border">
-                                  {gradeStudents.map(student => {
+                                  {levelStudents.map(student => {
                                     const studentTeacher = teachers.find(t => t.id === student.teacher_id);
                                     return (
                                       <tr 
@@ -3157,10 +3160,10 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                                       </tr>
                                     );
                                   })}
-                                  {gradeStudents.length === 0 && (
+                                  {levelStudents.length === 0 && (
                                     <tr>
-                                      <td colSpan={4} className="px-6 py-8 text-center text-aquire-grey-med italic">
-                                        No students found matching your search in this grade.
+                                      <td colSpan={5} className="px-6 py-8 text-center text-aquire-grey-med italic">
+                                        No students found matching your search in this level.
                                       </td>
                                     </tr>
                                   )}
@@ -3177,8 +3180,8 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                         <Users className="text-aquire-grey-med" size={32} />
                       </div>
                       <div>
-                        <h4 className="font-bold text-aquire-black">No Grades Selected</h4>
-                        <p className="text-sm text-aquire-grey-med max-w-xs mx-auto">Select at least one grade above to see and assign students.</p>
+                        <h4 className="font-bold text-aquire-black">No Levels Selected</h4>
+                        <p className="text-sm text-aquire-grey-med max-w-xs mx-auto">Select at least one level above to see and assign students.</p>
                       </div>
                     </div>
                   )}
@@ -3270,9 +3273,9 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
               <div className="card p-8 space-y-4 sticky top-6">
                 <button 
                   onClick={handleSaveTeacher}
-                  disabled={teacherForm.gradeIds.length === 0}
+                  disabled={teacherForm.levelIds.length === 0}
                   className={`w-full py-4 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg ${
-                    teacherForm.gradeIds.length > 0 
+                    teacherForm.levelIds.length > 0 
                       ? "bg-emerald-500 text-white hover:bg-emerald-600 shadow-emerald-500/20" 
                       : "bg-aquire-grey-light text-aquire-grey-med cursor-not-allowed"
                   }`}
@@ -3318,7 +3321,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
               setTeacherForm({
                 name: "",
                 email: "",
-                gradeIds: [],
+                levelIds: [],
                 assignedStudentIds: [],
                 permissions: {
                   learning_paths: true,
@@ -3357,7 +3360,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
               <thead>
                 <tr className="bg-aquire-grey-light/50 border-b border-aquire-border">
                   <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Teacher</th>
-                  <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Grades</th>
+                  <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Levels</th>
                   <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Assigned Students</th>
                   <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Status</th>
                   <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest text-right">Actions</th>
@@ -3385,13 +3388,13 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
-                          {teacher.gradeIds?.map(gId => (
-                            <span key={gId} className="px-2 py-0.5 bg-aquire-primary/10 text-aquire-primary text-[8px] font-black rounded-md uppercase tracking-wider">
-                              {grades.find(g => g.id === gId)?.name || "N/A"}
+                          {teacher.levelIds?.map(lId => (
+                            <span key={lId} className="px-2 py-0.5 bg-aquire-primary/10 text-aquire-primary text-[8px] font-black rounded-md uppercase tracking-wider">
+                              {levels.find(l => l.id === lId)?.name || "N/A"}
                             </span>
                           ))}
-                          {(!teacher.gradeIds || teacher.gradeIds.length === 0) && (
-                            <span className="text-xs text-aquire-grey-med italic">No grades</span>
+                          {(!teacher.levelIds || teacher.levelIds.length === 0) && (
+                            <span className="text-xs text-aquire-grey-med italic">No levels</span>
                           )}
                         </div>
                       </td>
@@ -3429,7 +3432,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                               setTeacherForm({ 
                                 name: teacher.name, 
                                 email: teacher.email, 
-                                gradeIds: teacher.gradeIds || [],
+                                levelIds: teacher.levelIds || [],
                                 assignedStudentIds: students.filter(s => s.teacher_id === teacher.id).map(s => s.id),
                                 permissions: teacher.permissions || {
                                   learning_paths: false,
@@ -3512,11 +3515,11 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
               <span className="text-aquire-primary">Students</span>
             </div>
             <h2 className="text-3xl font-bold text-aquire-black">Student Management</h2>
-            <p className="text-aquire-grey-med">Manage student accounts, grades, and invitations.</p>
+            <p className="text-aquire-grey-med">Manage student accounts, levels, and invitations.</p>
           </div>
           <button 
             onClick={() => {
-              setStudentForm({ name: "", email: "", grade_id: "" });
+              setStudentForm({ name: "", email: "", level_id: "" });
               setIsStudentModalOpen(true);
             }}
             className="btn-primary"
@@ -3545,7 +3548,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
               <thead>
                 <tr className="bg-aquire-grey-light/50 border-b border-aquire-border">
                   <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Student</th>
-                  <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Grade</th>
+                  <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Level</th>
                   <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Assigned Teacher</th>
                   <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Status</th>
                   <th className="px-6 py-4 text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Joined</th>
@@ -3574,7 +3577,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                       </td>
                       <td className="px-6 py-4">
                         <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black rounded-md uppercase tracking-wider">
-                          {grades.find(g => g.id === student.grade_id)?.name || "N/A"}
+                          {levels.find(l => l.id === student.level_id)?.name || "N/A"}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -3610,7 +3613,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                         <button 
                           onClick={() => {
                             setEditingStudent(student);
-                            setStudentForm({ name: student.name, email: student.email, grade_id: student.grade_id });
+                            setStudentForm({ name: student.name, email: student.email, level_id: student.level_id, teacher_id: student.teacher_id || "" });
                             setIsStudentModalOpen(true);
                           }}
                           className="p-2 hover:bg-aquire-primary/10 text-aquire-primary rounded-lg transition-all"
@@ -3681,7 +3684,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                   <div className="flex items-center justify-between mb-8">
                     <div>
                       <h3 className="text-2xl font-bold text-aquire-black">{editingStudent ? "Edit Student" : "Add New Student"}</h3>
-                      <p className="text-aquire-grey-med text-sm">{editingStudent ? "Update student profile and grade." : "Send an invitation to join Aquire Academy."}</p>
+                      <p className="text-aquire-grey-med text-sm">{editingStudent ? "Update student profile and level." : "Send an invitation to join Aquire Academy."}</p>
                     </div>
                     <button 
                       onClick={() => setIsStudentModalOpen(false)}
@@ -3713,15 +3716,15 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Grade</label>
+                      <label className="text-xs font-black text-aquire-grey-dark uppercase tracking-widest">Level</label>
                       <select 
-                        value={studentForm.grade_id}
-                        onChange={(e) => setStudentForm(prev => ({ ...prev, grade_id: e.target.value }))}
+                        value={studentForm.level_id}
+                        onChange={(e) => setStudentForm(prev => ({ ...prev, level_id: e.target.value }))}
                         className="input-field w-full"
                       >
-                        <option value="">Select Grade</option>
-                        {grades.map(g => (
-                          <option key={g.id} value={g.id}>{g.name}</option>
+                        <option value="">Select Level</option>
+                        {levels.map(l => (
+                          <option key={l.id} value={l.id}>{l.name}</option>
                         ))}
                       </select>
                     </div>
@@ -3850,7 +3853,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
         }}
         onSave={handleSaveModule}
         editingModule={editingModule}
-        grades={grades}
+        levels={levels}
       />
 
       <LessonModal
@@ -3863,7 +3866,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
         editingLesson={editingLesson}
         modules={modules}
         learningPaths={learningPaths}
-        grades={grades}
+        levels={levels}
       />
 
       <ChapterModal
@@ -3886,7 +3889,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
         editingPath={editingPath}
         modules={modules}
         lessons={lessons}
-        grades={grades}
+        levels={levels}
       />
 
       <QuestionBankModal
@@ -3897,7 +3900,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
         }}
         onSave={handleSaveQuestionBank}
         editingBank={editingBank}
-        availableGrades={grades}
+        availableLevels={levels}
       />
 
       {isPathPreviewOpen && previewPath && (
@@ -3939,14 +3942,14 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
         modules={modules}
         lessons={lessons}
         learningPaths={learningPaths}
-        grades={grades}
+        levels={levels}
       />
 
       <CurriculumWizard 
         isOpen={isCurriculumWizardOpen}
         onClose={() => setIsCurriculumWizardOpen(false)}
         onSave={handleSaveCurriculum}
-        grades={grades}
+        levels={levels}
       />
 
       <DeleteConfirmModal 

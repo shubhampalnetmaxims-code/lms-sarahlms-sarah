@@ -15,7 +15,7 @@ import {
   Plus
 } from "lucide-react";
 import CryptoJS from "crypto-js";
-import { Student, Invitation, Organization, Grade } from "../types";
+import { Student, Invitation, Organization, Level } from "../types";
 
 interface StudentSignupProps {
   token: string;
@@ -27,7 +27,7 @@ interface StudentSignupProps {
 export default function StudentSignup({ token, onComplete, onCancel, showToast }: StudentSignupProps) {
   const [invitation, setInvitation] = useState<Invitation | null>(null);
   const [organization, setOrganization] = useState<Organization | null>(null);
-  const [grade, setGrade] = useState<Grade | null>(null);
+  const [level, setLevel] = useState<Level | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -61,14 +61,14 @@ export default function StudentSignup({ token, onComplete, onCancel, showToast }
 
         setInvitation(invite);
 
-        // Load student to get grade_id
+        // Load student to get level_id
         const students: Student[] = JSON.parse(localStorage.getItem("aquire_students") || "[]");
         const student = students.find(s => s.email === invite.email);
         
         if (student) {
-          const grades: Grade[] = JSON.parse(localStorage.getItem("aquire_grades") || "[]");
-          const studentGrade = grades.find(g => g.id === student.grade_id);
-          setGrade(studentGrade || null);
+          const levels: Level[] = JSON.parse(localStorage.getItem("aquire_levels") || "[]");
+          const studentLevel = levels.find(l => l.id === student.level_id);
+          setLevel(studentLevel || null);
         }
 
         const org = localStorage.getItem("aquire_organization");
@@ -228,8 +228,8 @@ export default function StudentSignup({ token, onComplete, onCancel, showToast }
                   <School className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest opacity-60 font-bold">Grade</p>
-                  <p className="text-sm font-bold">{grade?.name || "Assigned Grade"}</p>
+                  <p className="text-[10px] uppercase tracking-widest opacity-60 font-bold">Level</p>
+                  <p className="text-sm font-bold">{level?.name || "Assigned Level"}</p>
                 </div>
               </div>
             </div>

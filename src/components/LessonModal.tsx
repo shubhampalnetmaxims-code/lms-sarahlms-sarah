@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Save, AlertCircle, Loader2, Upload, Image as ImageIcon, ChevronDown, Plus, Trash2 as TrashIcon } from "lucide-react";
 import RichTextEditor from "./RichTextEditor";
-import { Module, Lesson, LearningPath, Grade } from "../types";
+import { Module, Lesson, LearningPath, Level } from "../types";
 
 interface LessonModalProps {
   isOpen: boolean;
@@ -11,7 +11,7 @@ interface LessonModalProps {
   editingLesson: Lesson | null;
   modules: Module[];
   learningPaths: LearningPath[];
-  grades: Grade[];
+  levels: Level[];
 }
 
 const SAMPLE_THUMBNAILS = [
@@ -22,30 +22,30 @@ const SAMPLE_THUMBNAILS = [
   "https://picsum.photos/seed/edu5/400/300",
 ];
 
-export default function LessonModal({ isOpen, onClose, onSave, editingLesson, modules, learningPaths, grades }: LessonModalProps) {
+export default function LessonModal({ isOpen, onClose, onSave, editingLesson, modules, learningPaths, levels }: LessonModalProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [moduleId, setModuleId] = useState("");
-  const [gradeId, setGradeId] = useState("");
+  const [levelId, setLevelId] = useState("");
   const [thumbnail, setThumbnail] = useState(SAMPLE_THUMBNAILS[0]);
   const [isSkillLesson, setIsSkillLesson] = useState(false);
   const [learningPathId, setLearningPathId] = useState("");
   const [successKPIs, setSuccessKPIs] = useState<string[]>([]);
   const [newKPI, setNewKPI] = useState("");
-  const [errors, setErrors] = useState<{ name?: string; description?: string; moduleId?: string; gradeId?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; description?: string; moduleId?: string; levelId?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Get grades for the selected module
-  const moduleGrades = modules.find(m => m.id === moduleId)?.gradeIds || [];
-  const filteredGrades = grades.filter(g => moduleGrades.includes(g.id));
+  // Get levels for the selected module
+  const moduleLevels = modules.find(m => m.id === moduleId)?.levelIds || [];
+  const filteredLevels = levels.filter(l => moduleLevels.includes(l.id));
 
   useEffect(() => {
     if (editingLesson) {
       setName(editingLesson.name);
       setDescription(editingLesson.description);
       setModuleId(editingLesson.moduleId);
-      setGradeId(editingLesson.gradeId);
+      setLevelId(editingLesson.levelId);
       setThumbnail(editingLesson.thumbnail);
       setIsSkillLesson(editingLesson.isSkillLesson || false);
       setLearningPathId(editingLesson.learningPathId || "");
@@ -56,9 +56,9 @@ export default function LessonModal({ isOpen, onClose, onSave, editingLesson, mo
       const firstMod = modules[0]?.id || "";
       setModuleId(firstMod);
       
-      // Auto-select first grade from module
-      const firstModGrades = modules.find(m => m.id === firstMod)?.gradeIds || [];
-      setGradeId(firstModGrades[0] || "");
+      // Auto-select first level from module
+      const firstModLevels = modules.find(m => m.id === firstMod)?.levelIds || [];
+      setLevelId(firstModLevels[0] || "");
       
       setThumbnail(SAMPLE_THUMBNAILS[0]);
       setIsSkillLesson(false);
@@ -68,22 +68,22 @@ export default function LessonModal({ isOpen, onClose, onSave, editingLesson, mo
     setErrors({});
   }, [editingLesson, isOpen, modules]);
 
-  // When moduleId changes, update gradeId if current one is not in new module's grades
+  // When moduleId changes, update levelId if current one is not in new module's levels
   useEffect(() => {
     if (!editingLesson && moduleId) {
-      const currentModGrades = modules.find(m => m.id === moduleId)?.gradeIds || [];
-      if (!currentModGrades.includes(gradeId)) {
-        setGradeId(currentModGrades[0] || "");
+      const currentModLevels = modules.find(m => m.id === moduleId)?.levelIds || [];
+      if (!currentModLevels.includes(levelId)) {
+        setLevelId(currentModLevels[0] || "");
       }
     }
   }, [moduleId, modules]);
 
   const validate = () => {
-    const newErrors: { name?: string; description?: string; moduleId?: string; gradeId?: string } = {};
+    const newErrors: { name?: string; description?: string; moduleId?: string; levelId?: string } = {};
     if (!name.trim()) newErrors.name = "Lesson name is required";
     if (!isSkillLesson && !description.trim()) newErrors.description = "Description is required";
     if (!moduleId) newErrors.moduleId = "Please select a module";
-    if (!gradeId) newErrors.gradeId = "Please select a grade";
+    if (!levelId) newErrors.levelId = "Please select a level";
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -111,7 +111,7 @@ export default function LessonModal({ isOpen, onClose, onSave, editingLesson, mo
       name, 
       description, 
       moduleId, 
-      gradeId,
+      levelId,
       thumbnail,
       isSkillLesson,
       learningPathId: isSkillLesson ? learningPathId : undefined,
@@ -186,27 +186,27 @@ export default function LessonModal({ isOpen, onClose, onSave, editingLesson, mo
 
                   <div className="space-y-2">
                     <label className="block text-sm font-bold text-aquire-grey-dark ml-1">
-                      Step 2: Assign Grade
+                      Step 2: Assign Level
                     </label>
                     <div className="relative">
                       <select
-                        value={gradeId}
-                        onChange={(e) => setGradeId(e.target.value)}
+                        value={levelId}
+                        onChange={(e) => setLevelId(e.target.value)}
                         disabled={!moduleId}
                         className="w-full px-6 py-4 rounded-2xl input-field appearance-none cursor-pointer disabled:opacity-50 disabled:bg-aquire-grey-light"
                       >
-                        <option value="">{moduleId ? "Select Grade..." : "Select module first"}</option>
-                        {filteredGrades.map(g => (
-                          <option key={g.id} value={g.id}>
-                            {g.name}
+                        <option value="">{moduleId ? "Select Level..." : "Select module first"}</option>
+                        {filteredLevels.map(l => (
+                          <option key={l.id} value={l.id}>
+                            {l.name}
                           </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-aquire-grey-med w-4 h-4 pointer-events-none" />
                     </div>
-                    {errors.gradeId && (
+                    {errors.levelId && (
                       <p className="text-red-500 text-xs flex items-center gap-1 mt-1 ml-1">
-                        <AlertCircle size={12} /> {errors.gradeId}
+                        <AlertCircle size={12} /> {errors.levelId}
                       </p>
                     )}
                   </div>

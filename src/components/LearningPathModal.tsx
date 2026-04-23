@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import RichTextEditor from "./RichTextEditor";
-import { Module, Lesson, LearningPath, Grade } from "../types";
+import { Module, Lesson, LearningPath, Level } from "../types";
 
 interface LearningPathModalProps {
   isOpen: boolean;
@@ -24,7 +24,7 @@ interface LearningPathModalProps {
   editingPath: LearningPath | null;
   modules: Module[];
   lessons: Lesson[];
-  grades: Grade[];
+  levels: Level[];
 }
 
 const DraggableAny = Draggable as any;
@@ -36,16 +36,16 @@ export default function LearningPathModal({
   editingPath, 
   modules, 
   lessons,
-  grades
+  levels
 }: LearningPathModalProps) {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [stars, setStars] = useState(5);
-  const [gradeIds, setGradeIds] = useState<string[]>([]);
+  const [levelIds, setLevelIds] = useState<string[]>([]);
   const [moduleId, setModuleId] = useState("");
   const [starLessons, setStarLessons] = useState<(string | null)[]>([]);
-  const [errors, setErrors] = useState<{ name?: string; description?: string; moduleId?: string; grades?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; description?: string; moduleId?: string; levels?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function LearningPathModal({
       setName(editingPath.name);
       setDescription(editingPath.description);
       setStars(editingPath.stars);
-      setGradeIds(editingPath.gradeIds || []);
+      setLevelIds(editingPath.levelIds || []);
       setModuleId(editingPath.moduleId);
       setStarLessons(editingPath.starLessons);
       setStep(1);
@@ -61,7 +61,7 @@ export default function LearningPathModal({
       setName("");
       setDescription("");
       setStars(5);
-      setGradeIds([]);
+      setLevelIds([]);
       setModuleId("");
       setStarLessons(new Array(5).fill(null));
       setStep(1);
@@ -83,10 +83,10 @@ export default function LearningPathModal({
   }, [stars]);
 
   const validateStep1 = () => {
-    const newErrors: { name?: string; description?: string; grades?: string } = {};
+    const newErrors: { name?: string; description?: string; levels?: string } = {};
     if (!name.trim()) newErrors.name = "Path name is required";
     if (!description.trim()) newErrors.description = "Description is required";
-    if (gradeIds.length === 0) newErrors.grades = "Select at least 1 grade";
+    if (levelIds.length === 0) newErrors.levels = "Select at least 1 level";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -108,11 +108,11 @@ export default function LearningPathModal({
     setStep(prev => prev - 1);
   };
 
-  const toggleGrade = (id: string) => {
-    setGradeIds(prev => 
-      prev.includes(id) ? prev.filter(gid => gid !== id) : [...prev, id]
+  const toggleLevel = (id: string) => {
+    setLevelIds(prev => 
+      prev.includes(id) ? prev.filter(lid => lid !== id) : [...prev, id]
     );
-    // Reset module if grades change
+    // Reset module if levels change
     setModuleId("");
   };
 
@@ -162,14 +162,14 @@ export default function LearningPathModal({
       skillLessonIds: []
     }));
 
-    onSave({ name, description, moduleId, gradeIds, stars, starLessons, starsData });
+    onSave({ name, description, moduleId, levelIds, stars, starLessons, starsData });
     setIsSubmitting(false);
     onClose();
   };
 
-  // Filter modules based on selected grades
+  // Filter modules based on selected levels
   const filteredModules = modules.filter(m => 
-    m.gradeIds && m.gradeIds.some(gid => gradeIds.includes(gid))
+    m.levelIds && m.levelIds.some(lid => levelIds.includes(lid))
   );
 
   const availableLessons = lessons.filter(l => l.moduleId === moduleId && !starLessons.includes(l.id));
@@ -199,15 +199,15 @@ export default function LearningPathModal({
       </div>
 
       <div className="space-y-3">
-        <label className="block text-sm font-bold text-aquire-grey-dark ml-1">Select Grades</label>
+        <label className="block text-sm font-bold text-aquire-grey-dark ml-1">Select Levels</label>
         <div className="flex flex-wrap gap-2">
-          {grades.filter(g => g.status === 'active').map(grade => {
-            const isSelected = gradeIds.includes(grade.id);
+          {levels.filter(l => l.status === 'active').map(level => {
+            const isSelected = levelIds.includes(level.id);
             return (
               <button
-                key={grade.id}
+                key={level.id}
                 type="button"
-                onClick={() => toggleGrade(grade.id)}
+                onClick={() => toggleLevel(level.id)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border-2 ${
                   isSelected 
                     ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20" 
@@ -215,12 +215,12 @@ export default function LearningPathModal({
                 }`}
               >
                 {isSelected && <Check size={14} />}
-                {grade.name}
+                {level.name}
               </button>
             );
           })}
         </div>
-        {errors.grades && <p className="text-red-500 text-xs mt-1 ml-1">{errors.grades}</p>}
+        {errors.levels && <p className="text-red-500 text-xs mt-1 ml-1">{errors.levels}</p>}
       </div>
 
       <div className="space-y-2">
@@ -242,7 +242,7 @@ export default function LearningPathModal({
     <div className="space-y-6">
       <div className="space-y-4">
         <label className="block text-sm font-bold text-aquire-grey-dark ml-1">
-          Select Module (Filtered by Grades)
+          Select Module (Filtered by Levels)
         </label>
         {filteredModules.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -262,17 +262,17 @@ export default function LearningPathModal({
                     {mod.name}
                   </h4>
                   <div className="flex flex-wrap gap-1 justify-end">
-                    {mod.gradeIds?.slice(0, 2).map(gid => {
-                      const g = grades.find(grade => grade.id === gid);
-                      return g ? (
-                        <span key={gid} className="px-2 py-0.5 bg-aquire-grey-light text-aquire-grey-med text-[8px] font-black rounded-md uppercase">
-                          {g.name}
+                    {mod.levelIds?.slice(0, 2).map(lid => {
+                      const l = levels.find(level => level.id === lid);
+                      return l ? (
+                        <span key={lid} className="px-2 py-0.5 bg-aquire-grey-light text-aquire-grey-med text-[8px] font-black rounded-md uppercase">
+                          {l.name}
                         </span>
                       ) : null;
                     })}
-                    {(mod.gradeIds?.length || 0) > 2 && (
+                    {(mod.levelIds?.length || 0) > 2 && (
                       <span className="px-2 py-0.5 bg-aquire-grey-light text-aquire-grey-med text-[8px] font-black rounded-md uppercase">
-                        +{(mod.gradeIds?.length || 0) - 2}
+                        +{(mod.levelIds?.length || 0) - 2}
                       </span>
                     )}
                   </div>
@@ -283,13 +283,13 @@ export default function LearningPathModal({
           </div>
         ) : (
           <div className="p-12 text-center bg-aquire-grey-light rounded-3xl border-2 border-dashed border-aquire-border">
-            <p className="text-aquire-grey-med font-bold">No modules found for the selected grades.</p>
+            <p className="text-aquire-grey-med font-bold">No modules found for the selected levels.</p>
             <button 
               type="button"
               onClick={() => setStep(1)}
               className="mt-4 text-aquire-primary text-sm font-bold hover:underline"
             >
-              Go back to change grades
+              Go back to change levels
             </button>
           </div>
         )}
@@ -413,11 +413,11 @@ export default function LearningPathModal({
           <h4 className="text-xl font-bold text-aquire-black">{name}</h4>
           <div className="flex items-center gap-4">
             <div className="flex flex-wrap gap-1">
-              {gradeIds.map(gid => {
-                const g = grades.find(grade => grade.id === gid);
-                return g ? (
-                  <span key={gid} className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase">
-                    {g.name}
+              {levelIds.map(lid => {
+                const l = levels.find(level => level.id === lid);
+                return l ? (
+                  <span key={lid} className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase">
+                    {l.name}
                   </span>
                 ) : null;
               })}

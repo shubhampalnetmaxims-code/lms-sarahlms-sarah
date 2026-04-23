@@ -15,7 +15,7 @@ import {
   ChevronRight,
   Plus
 } from "lucide-react";
-import { Teacher, Grade, Student } from "../types";
+import { Teacher, Level, Student } from "../types";
 
 interface TeacherDashboardProps {
   teacher: Teacher;
@@ -27,18 +27,18 @@ interface TeacherDashboardProps {
 }
 
 export default function TeacherDashboard({ teacher, isImpersonating, onLogout, onBackToAdmin, showToast, activeTab }: TeacherDashboardProps) {
-  const [grades, setGrades] = useState<Grade[]>([]);
+  const [levels, setLevels] = useState<Level[]>([]);
   const [allStudents, setAllStudents] = useState<Student[]>([]);
 
   useEffect(() => {
-    const savedGrades = localStorage.getItem("aquire_grades");
-    if (savedGrades) setGrades(JSON.parse(savedGrades));
+    const savedLevels = localStorage.getItem("aquire_levels");
+    if (savedLevels) setLevels(JSON.parse(savedLevels));
 
     const savedStudents = localStorage.getItem("aquire_students");
     if (savedStudents) setAllStudents(JSON.parse(savedStudents));
   }, []);
 
-  const teacherGrades = grades.filter(g => teacher.gradeIds?.includes(g.id));
+  const teacherLevels = levels.filter(l => teacher.levelIds?.includes(l.id));
   const assignedStudents = allStudents.filter(s => s.teacher_id === teacher.id);
   const avgProgress = assignedStudents.length > 0 
     ? Math.round(assignedStudents.reduce((acc, s) => acc + (s.progress || 0), 0) / assignedStudents.length)
@@ -75,13 +75,13 @@ export default function TeacherDashboard({ teacher, isImpersonating, onLogout, o
             </h1>
             <div className="flex flex-wrap gap-2 mt-2">
               <span className="text-aquire-grey-med font-medium">Teacher Dashboard •</span>
-              {teacherGrades.map(g => (
-                <span key={g.id} className="px-2 py-0.5 bg-aquire-primary/10 text-aquire-primary text-[10px] font-black rounded-md uppercase tracking-widest">
-                  {g.name}
+              {teacherLevels.map(l => (
+                <span key={l.id} className="px-2 py-0.5 bg-aquire-primary/10 text-aquire-primary text-[10px] font-black rounded-md uppercase tracking-widest">
+                  {l.name}
                 </span>
               ))}
-              {teacherGrades.length === 0 && (
-                <span className="text-aquire-grey-med font-medium italic">No assigned grades</span>
+              {teacherLevels.length === 0 && (
+                <span className="text-aquire-grey-med font-medium italic">No assigned levels</span>
               )}
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function TeacherDashboard({ teacher, isImpersonating, onLogout, o
                     <div>
                       <h4 className="font-bold text-aquire-black text-sm group-hover:text-aquire-primary transition-colors">{student.name}</h4>
                       <p className="text-[10px] text-aquire-grey-med font-bold uppercase tracking-widest">
-                        {grades.find(g => g.id === student.grade_id)?.name || "N/A"}
+                        {levels.find(l => l.id === student.level_id)?.name || "N/A"}
                       </p>
                     </div>
                   </div>
@@ -338,7 +338,7 @@ export default function TeacherDashboard({ teacher, isImpersonating, onLogout, o
                 <div>
                   <h3 className="font-bold text-aquire-black group-hover:text-aquire-primary transition-colors">{student.name}</h3>
                   <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black rounded-md uppercase tracking-wider">
-                    {grades.find(g => g.id === student.grade_id)?.name || "N/A"}
+                    {levels.find(l => l.id === student.level_id)?.name || "N/A"}
                   </span>
                 </div>
               </div>
@@ -424,15 +424,15 @@ export default function TeacherDashboard({ teacher, isImpersonating, onLogout, o
             <input type="email" defaultValue={teacher.email} className="input-field w-full" disabled />
           </div>
           <div className="space-y-2 md:col-span-2">
-            <label className="text-xs font-black text-aquire-grey-med uppercase tracking-widest">Assigned Grades</label>
+            <label className="text-xs font-black text-aquire-grey-med uppercase tracking-widest">Assigned Levels</label>
             <div className="flex flex-wrap gap-2 p-4 bg-aquire-grey-light rounded-2xl border border-aquire-border">
-              {teacherGrades.map(g => (
-                <span key={g.id} className="px-3 py-1 bg-white border border-aquire-border text-aquire-primary text-xs font-bold rounded-xl shadow-sm">
-                  {g.name}
+              {teacherLevels.map(l => (
+                <span key={l.id} className="px-3 py-1 bg-white border border-aquire-border text-aquire-primary text-xs font-bold rounded-xl shadow-sm">
+                  {l.name}
                 </span>
               ))}
-              {teacherGrades.length === 0 && (
-                <span className="text-sm text-aquire-grey-med italic">No grades assigned by administrator.</span>
+              {teacherLevels.length === 0 && (
+                <span className="text-sm text-aquire-grey-med italic">No levels assigned by administrator.</span>
               )}
             </div>
           </div>

@@ -9,7 +9,7 @@ import {
   CheckCircle2,
   GraduationCap
 } from "lucide-react";
-import { Module, Lesson, LearningPath, Grade } from "../types";
+import { Module, Lesson, LearningPath, Level } from "../types";
 
 interface SkillLessonModalProps {
   isOpen: boolean;
@@ -18,7 +18,7 @@ interface SkillLessonModalProps {
   modules: Module[];
   lessons: Lesson[];
   learningPaths: LearningPath[];
-  grades: Grade[];
+  levels: Level[];
 }
 
 export default function SkillLessonModal({ 
@@ -28,9 +28,9 @@ export default function SkillLessonModal({
   modules, 
   lessons, 
   learningPaths,
-  grades
+  levels
 }: SkillLessonModalProps) {
-  const [selectedGradeId, setSelectedGradeId] = useState("");
+  const [selectedLevelId, setSelectedLevelId] = useState("");
   const [selectedModuleId, setSelectedModuleId] = useState("");
   const [selectedLessonId, setSelectedLessonId] = useState("");
   const [selectedPathId, setSelectedPathId] = useState("");
@@ -38,7 +38,7 @@ export default function SkillLessonModal({
 
   useEffect(() => {
     if (isOpen) {
-      setSelectedGradeId("");
+      setSelectedLevelId("");
       setSelectedModuleId("");
       setSelectedLessonId("");
       setSelectedPathId("");
@@ -57,19 +57,19 @@ export default function SkillLessonModal({
     }
   };
 
-  // Filter modules based on selected grade
+  // Filter modules based on selected level
   const filteredModules = modules.filter(m => 
-    !selectedGradeId || (m.gradeIds && m.gradeIds.includes(selectedGradeId))
+    !selectedLevelId || (m.levelIds && m.levelIds.includes(selectedLevelId))
   );
 
-  // Filter lessons based on selected module AND grade
+  // Filter lessons based on selected module AND level
   const filteredLessons = lessons.filter(l => 
-    l.moduleId === selectedModuleId && (!selectedGradeId || l.gradeId === selectedGradeId)
+    l.moduleId === selectedModuleId && (!selectedLevelId || l.levelId === selectedLevelId)
   );
 
-  // Filter paths based on selected grade
+  // Filter paths based on selected level
   const filteredPaths = learningPaths.filter(p => 
-    !selectedGradeId || (p.gradeIds && p.gradeIds.includes(selectedGradeId))
+    !selectedLevelId || (p.levelIds && p.levelIds.includes(selectedLevelId))
   );
 
   return (
@@ -108,30 +108,30 @@ export default function SkillLessonModal({
 
             {/* Content */}
             <div className="p-10 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
-              {/* Grade Selection */}
+              {/* Level Selection */}
               <div className="space-y-2">
                 <label className="block text-sm font-bold text-aquire-grey-dark ml-1 flex items-center gap-2">
-                  <GraduationCap size={14} /> Select Grade
+                  <GraduationCap size={14} /> Select Level
                 </label>
                 <select 
-                  value={selectedGradeId}
+                  value={selectedLevelId}
                   onChange={(e) => {
-                    setSelectedGradeId(e.target.value);
+                    setSelectedLevelId(e.target.value);
                     setSelectedModuleId("");
                     setSelectedLessonId("");
                     setSelectedPathId("");
                   }}
                   className="w-full px-4 py-4 rounded-2xl border-2 border-aquire-border focus:border-aquire-primary outline-none transition-all bg-white font-medium text-aquire-black"
                 >
-                  <option value="">Choose a grade...</option>
-                  {grades.filter(g => g.status === 'active').map(grade => (
-                    <option key={grade.id} value={grade.id}>{grade.name}</option>
+                  <option value="">Choose a level...</option>
+                  {levels.filter(l => l.status === 'active').map(level => (
+                    <option key={level.id} value={level.id}>{level.name}</option>
                   ))}
                 </select>
               </div>
 
               {/* Module Selection */}
-              <div className={`space-y-2 transition-all ${!selectedGradeId ? "opacity-50 pointer-events-none" : ""}`}>
+              <div className={`space-y-2 transition-all ${!selectedLevelId ? "opacity-50 pointer-events-none" : ""}`}>
                 <label className="block text-sm font-bold text-aquire-grey-dark ml-1 flex items-center gap-2">
                   <Layers size={14} /> Select Module
                 </label>
@@ -168,7 +168,7 @@ export default function SkillLessonModal({
               </div>
 
               {/* Path Selection */}
-              <div className={`space-y-2 transition-all ${!selectedGradeId ? "opacity-50 pointer-events-none" : ""}`}>
+              <div className={`space-y-2 transition-all ${!selectedLevelId ? "opacity-50 pointer-events-none" : ""}`}>
                 <label className="block text-sm font-bold text-aquire-grey-dark ml-1 flex items-center gap-2">
                   <Trophy size={14} /> Select Learning Path
                 </label>

@@ -3,51 +3,51 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, Save, AlertCircle, Loader2, Check } from "lucide-react";
 import RichTextEditor from "./RichTextEditor";
 
-import { Module, Grade } from "../types";
+import { Module, Level } from "../types";
 
 interface ModuleModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (module: Omit<Module, "id" | "createdAt">) => void;
   editingModule: Module | null;
-  grades: Grade[];
+  levels: Level[];
 }
 
-export default function ModuleModal({ isOpen, onClose, onSave, editingModule, grades }: ModuleModalProps) {
+export default function ModuleModal({ isOpen, onClose, onSave, editingModule, levels }: ModuleModalProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [gradeIds, setGradeIds] = useState<string[]>([]);
-  const [errors, setErrors] = useState<{ name?: string; description?: string; grades?: string }>({});
+  const [levelIds, setLevelIds] = useState<string[]>([]);
+  const [errors, setErrors] = useState<{ name?: string; description?: string; levels?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (editingModule) {
       setName(editingModule.name);
       setDescription(editingModule.description);
-      setGradeIds(editingModule.gradeIds || []);
+      setLevelIds(editingModule.levelIds || []);
     } else {
       setName("");
       setDescription("");
-      setGradeIds([]);
+      setLevelIds([]);
     }
     setErrors({});
   }, [editingModule, isOpen]);
 
   const validate = () => {
-    const newErrors: { name?: string; description?: string; grades?: string } = {};
+    const newErrors: { name?: string; description?: string; levels?: string } = {};
     if (!name.trim()) newErrors.name = "Module name is required";
     if (!description.trim()) newErrors.description = "Description is required";
     else if (description.length > 200) newErrors.description = "Description must be under 200 characters";
     
-    if (gradeIds.length === 0) newErrors.grades = "Assign at least 1 grade";
+    if (levelIds.length === 0) newErrors.levels = "Assign at least 1 level";
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const toggleGrade = (id: string) => {
-    setGradeIds(prev => 
-      prev.includes(id) ? prev.filter(gid => gid !== id) : [...prev, id]
+  const toggleLevel = (id: string) => {
+    setLevelIds(prev => 
+      prev.includes(id) ? prev.filter(lid => lid !== id) : [...prev, id]
     );
   };
 
@@ -59,7 +59,7 @@ export default function ModuleModal({ isOpen, onClose, onSave, editingModule, gr
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 800));
     
-    onSave({ name, description, gradeIds });
+    onSave({ name, description, levelIds });
     setIsSubmitting(false);
     onClose();
   };
@@ -137,16 +137,16 @@ export default function ModuleModal({ isOpen, onClose, onSave, editingModule, gr
 
               <div className="space-y-3">
                 <label className="block text-sm font-bold text-aquire-grey-dark ml-1">
-                  Assign Grades
+                  Assign Levels
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {grades.filter(g => g.status === 'active').map(grade => {
-                    const isSelected = gradeIds.includes(grade.id);
+                  {levels.filter(l => l.status === 'active').map(level => {
+                    const isSelected = levelIds.includes(level.id);
                     return (
                       <button
-                        key={grade.id}
+                        key={level.id}
                         type="button"
-                        onClick={() => toggleGrade(grade.id)}
+                        onClick={() => toggleLevel(level.id)}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border-2 ${
                           isSelected 
                             ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20" 
@@ -154,14 +154,14 @@ export default function ModuleModal({ isOpen, onClose, onSave, editingModule, gr
                         }`}
                       >
                         {isSelected && <Check size={14} />}
-                        {grade.name}
+                        {level.name}
                       </button>
                     );
                   })}
                 </div>
-                {errors.grades && (
+                {errors.levels && (
                   <p className="text-red-500 text-xs flex items-center gap-1 mt-1 ml-1">
-                    <AlertCircle size={12} /> {errors.grades}
+                    <AlertCircle size={12} /> {errors.levels}
                   </p>
                 )}
               </div>
