@@ -28,10 +28,12 @@ export default function LessonModal({ isOpen, onClose, onSave, editingLesson, mo
   const [moduleId, setModuleId] = useState("");
   const [levelId, setLevelId] = useState("");
   const [thumbnail, setThumbnail] = useState(SAMPLE_THUMBNAILS[0]);
-  const [isSkillLesson, setIsSkillLesson] = useState(false);
-  const [learningPathId, setLearningPathId] = useState("");
   const [successKPIs, setSuccessKPIs] = useState<string[]>([]);
   const [newKPI, setNewKPI] = useState("");
+  const [learningIntentions, setLearningIntentions] = useState<string[]>([]);
+  const [newIntention, setNewIntention] = useState("");
+  const [successCriteria, setSuccessCriteria] = useState<string[]>([]);
+  const [newCriterion, setNewCriterion] = useState("");
   const [errors, setErrors] = useState<{ name?: string; description?: string; moduleId?: string; levelId?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -47,9 +49,9 @@ export default function LessonModal({ isOpen, onClose, onSave, editingLesson, mo
       setModuleId(editingLesson.moduleId);
       setLevelId(editingLesson.levelId);
       setThumbnail(editingLesson.thumbnail);
-      setIsSkillLesson(editingLesson.isSkillLesson || false);
-      setLearningPathId(editingLesson.learningPathId || "");
       setSuccessKPIs(editingLesson.successKPIs || []);
+      setLearningIntentions(editingLesson.learningIntentions || []);
+      setSuccessCriteria(editingLesson.successCriteria || []);
     } else {
       setName("");
       setDescription("");
@@ -61,9 +63,9 @@ export default function LessonModal({ isOpen, onClose, onSave, editingLesson, mo
       setLevelId(firstModLevels[0] || "");
       
       setThumbnail(SAMPLE_THUMBNAILS[0]);
-      setIsSkillLesson(false);
-      setLearningPathId("");
       setSuccessKPIs([]);
+      setLearningIntentions([]);
+      setSuccessCriteria([]);
     }
     setErrors({});
   }, [editingLesson, isOpen, modules]);
@@ -81,7 +83,7 @@ export default function LessonModal({ isOpen, onClose, onSave, editingLesson, mo
   const validate = () => {
     const newErrors: { name?: string; description?: string; moduleId?: string; levelId?: string } = {};
     if (!name.trim()) newErrors.name = "Lesson name is required";
-    if (!isSkillLesson && !description.trim()) newErrors.description = "Description is required";
+    if (!description.trim()) newErrors.description = "Description is required";
     if (!moduleId) newErrors.moduleId = "Please select a module";
     if (!levelId) newErrors.levelId = "Please select a level";
     
@@ -113,9 +115,9 @@ export default function LessonModal({ isOpen, onClose, onSave, editingLesson, mo
       moduleId, 
       levelId,
       thumbnail,
-      isSkillLesson,
-      learningPathId: isSkillLesson ? learningPathId : undefined,
-      successKPIs: successKPIs.length > 0 ? successKPIs : undefined
+      successKPIs: successKPIs.length > 0 ? successKPIs : undefined,
+      learningIntentions: learningIntentions.length > 0 ? learningIntentions : undefined,
+      successCriteria: successCriteria.length > 0 ? successCriteria : undefined
     });
     setIsSubmitting(false);
     onClose();
@@ -275,55 +277,6 @@ export default function LessonModal({ isOpen, onClose, onSave, editingLesson, mo
                 </div>
               </div>
 
-              {/* Advanced Section */}
-              <div className="p-6 bg-aquire-grey-light/30 rounded-[24px] border border-aquire-border space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-sm font-bold text-aquire-black">Advanced Settings</h4>
-                    <p className="text-[10px] text-aquire-grey-med uppercase tracking-wider font-bold">Skill-Based Learning Path Integration</p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="sr-only peer"
-                      checked={isSkillLesson}
-                      onChange={(e) => setIsSkillLesson(e.target.checked)}
-                    />
-                    <div className="w-11 h-6 bg-aquire-grey-med peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-aquire-primary"></div>
-                    <span className="ml-3 text-xs font-bold text-aquire-grey-dark">Skill Lesson</span>
-                  </label>
-                </div>
-
-                {isSkillLesson && (
-                  <motion.div 
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="pt-4 border-t border-aquire-border"
-                  >
-                    <div className="space-y-2">
-                      <label className="block text-xs font-bold text-aquire-grey-dark ml-1">
-                        Select Learning Path
-                      </label>
-                      <div className="relative">
-                        <select
-                          value={learningPathId}
-                          onChange={(e) => setLearningPathId(e.target.value)}
-                          className="w-full px-5 py-3 rounded-xl input-field appearance-none cursor-pointer text-sm"
-                        >
-                          <option value="">Select a path...</option>
-                          {learningPaths.map(p => (
-                            <option key={p.id} value={p.id}>
-                              {p.name}
-                            </option>
-                          ))}
-                        </select>
-                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-aquire-grey-med w-4 h-4 pointer-events-none" />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </div>
-
               <div className="space-y-4">
                 <label className="block text-sm font-bold text-aquire-grey-dark ml-1">
                   Success KPIs (Lessons Skills)
@@ -383,23 +336,135 @@ export default function LessonModal({ isOpen, onClose, onSave, editingLesson, mo
                 </div>
               </div>
 
-              {!isSkillLesson && (
-                <div className="space-y-2">
-                  <label className="block text-sm font-bold text-aquire-grey-dark ml-1">
-                    Description
-                  </label>
-                  <RichTextEditor
-                    value={description}
-                    onChange={setDescription}
-                    placeholder="What will students learn in this lesson?"
+              {/* Learning Intention */}
+              <div className="space-y-4">
+                <label className="block text-sm font-bold text-aquire-grey-dark ml-1">
+                  Learning Intention (Optional)
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newIntention}
+                    onChange={(e) => setNewIntention(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (newIntention.trim()) {
+                          setLearningIntentions([...learningIntentions, newIntention.trim()]);
+                          setNewIntention("");
+                        }
+                      }
+                    }}
+                    placeholder="e.g. Students will understand basics of algorithms..."
+                    className="flex-1 px-5 py-3 rounded-xl input-field text-sm"
                   />
-                  {errors.description && (
-                    <p className="text-red-500 text-xs flex items-center gap-1 mt-1 ml-1">
-                      <AlertCircle size={12} /> {errors.description}
-                    </p>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (newIntention.trim()) {
+                        setLearningIntentions([...learningIntentions, newIntention.trim()]);
+                        setNewIntention("");
+                      }
+                    }}
+                    className="p-3 bg-aquire-primary text-white rounded-xl hover:bg-aquire-primary/90 transition-all shadow-sm"
+                  >
+                    <Plus size={20} />
+                  </button>
                 </div>
-              )}
+                
+                <div className="flex flex-wrap gap-2">
+                  {learningIntentions.map((item, idx) => (
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      key={idx}
+                      className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg border border-blue-100 group"
+                    >
+                      {item}
+                      <button
+                        type="button"
+                        onClick={() => setLearningIntentions(learningIntentions.filter((_, i) => i !== idx))}
+                        className="text-blue-400 hover:text-blue-600 transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Success Criteria */}
+              <div className="space-y-4">
+                <label className="block text-sm font-bold text-aquire-grey-dark ml-1">
+                  Success Criteria (Optional)
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newCriterion}
+                    onChange={(e) => setNewCriterion(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (newCriterion.trim()) {
+                          setSuccessCriteria([...successCriteria, newCriterion.trim()]);
+                          setNewCriterion("");
+                        }
+                      }
+                    }}
+                    placeholder="e.g. I can explain what an algorithm is..."
+                    className="flex-1 px-5 py-3 rounded-xl input-field text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (newCriterion.trim()) {
+                        setSuccessCriteria([...successCriteria, newCriterion.trim()]);
+                        setNewCriterion("");
+                      }
+                    }}
+                    className="p-3 bg-aquire-primary text-white rounded-xl hover:bg-aquire-primary/90 transition-all shadow-sm"
+                  >
+                    <Plus size={20} />
+                  </button>
+                </div>
+                
+                <div className="flex flex-wrap gap-2">
+                  {successCriteria.map((item, idx) => (
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      key={idx}
+                      className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-lg border border-indigo-100 group"
+                    >
+                      {item}
+                      <button
+                        type="button"
+                        onClick={() => setSuccessCriteria(successCriteria.filter((_, i) => i !== idx))}
+                        className="text-indigo-400 hover:text-indigo-600 transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-aquire-grey-dark ml-1">
+                  Description
+                </label>
+                <RichTextEditor
+                  value={description}
+                  onChange={setDescription}
+                  placeholder="What will students learn in this lesson?"
+                />
+                {errors.description && (
+                  <p className="text-red-500 text-xs flex items-center gap-1 mt-1 ml-1">
+                    <AlertCircle size={12} /> {errors.description}
+                  </p>
+                )}
+              </div>
 
               <div className="flex gap-4 pt-4">
                 <button

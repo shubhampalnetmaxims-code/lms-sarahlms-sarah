@@ -26,12 +26,16 @@ export interface Lesson {
   name: string;
   description: string;
   successKPIs?: string[];
+  learningIntentions?: string[];
+  successCriteria?: string[];
   thumbnail: string;
   chapters: Chapter[];
   createdAt: string;
   isSkillLesson?: boolean;
   learningPathId?: string;
   starNumber?: number;
+  assignedStudentIds?: string[];
+  rewardStars?: number;
 }
 
 export interface PathStarData {

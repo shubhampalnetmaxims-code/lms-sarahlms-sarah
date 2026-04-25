@@ -98,23 +98,76 @@ const INITIAL_LEVELS: Level[] = [
   { id: "g5", name: "Level 5", description: "Upper Primary", status: "active", created: new Date().toISOString() },
 ];
 
+const INITIAL_STUDENTS: Student[] = [
+  // Level 1
+  { id: "s1", name: "Aarav Kumar", email: "aarav.k1@school.com", level_id: "g1", teacher_id: "t1", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=aarav1", progress: 80 },
+  { id: "s2", name: "Ananya Sharma", email: "ananya.s1@school.com", level_id: "g1", teacher_id: "t2", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=ananya1", progress: 45 },
+  { id: "s3", name: "Ishaan Gupta", email: "ishaan.g1@school.com", level_id: "g1", teacher_id: "t4", status: "pending", joined: new Date().toISOString(), progress: 0 },
+  { id: "s4", name: "Saanvi Patel", email: "saanvi.p1@school.com", level_id: "g1", teacher_id: "t1", status: "active", joined: new Date().toISOString(), progress: 65 },
+  { id: "s5", name: "Arjun Verma", email: "arjun.v1@school.com", level_id: "g1", teacher_id: "t2", status: "inactive", joined: new Date().toISOString(), progress: 30 },
+  
+  // Level 2
+  { id: "s6", name: "Vivaan Malhotra", email: "vivaan.m2@school.com", level_id: "g2", teacher_id: "t2", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=vivaan2", progress: 90 },
+  { id: "s7", name: "Diya Reddy", email: "diya.r2@school.com", level_id: "g2", teacher_id: "t1", status: "active", joined: new Date().toISOString(), progress: 75 },
+  { id: "s8", name: "Kabir Joshi", email: "kabir.j2@school.com", level_id: "g2", teacher_id: "t4", status: "active", joined: new Date().toISOString(), progress: 55 },
+  { id: "s9", name: "Myra Nair", email: "myra.n2@school.com", level_id: "g2", status: "pending", joined: new Date().toISOString(), progress: 0 },
+  { id: "s10", name: "Advait Bose", email: "advait.b2@school.com", level_id: "g2", status: "pending", joined: new Date().toISOString(), progress: 0 },
+  
+  // Level 3
+  { id: "s11", name: "Kiara Goel", email: "kiara.g3@school.com", level_id: "g3", status: "pending", joined: new Date().toISOString(), progress: 0 },
+  { id: "s12", name: "Reyansh Khan", email: "reyansh.k3@school.com", level_id: "g3", status: "pending", joined: new Date().toISOString(), progress: 0 },
+  { id: "s13", name: "Zoya Das", email: "zoya.d3@school.com", level_id: "g3", status: "active", joined: new Date().toISOString(), progress: 85 },
+  { id: "s14", name: "Aarav Singh", email: "aarav.s3@school.com", level_id: "g3", status: "active", joined: new Date().toISOString(), progress: 92 },
+  { id: "s15", name: "Ananya Kapoor", email: "ananya.k3@school.com", level_id: "g3", status: "active", joined: new Date().toISOString(), progress: 78 },
+  
+  // Level 4
+  { id: "s16", name: "Rohan Mehra", email: "rohan.m4@school.com", level_id: "g4", teacher_id: "t3", status: "active", joined: new Date().toISOString(), progress: 60 },
+  { id: "s17", name: "Tara Iyer", email: "tara.i4@school.com", level_id: "g4", teacher_id: "t5", status: "active", joined: new Date().toISOString(), progress: 72 },
+  { id: "s18", name: "Nikhil Raj", email: "nikhil.r4@school.com", level_id: "g4", teacher_id: "t1", status: "active", joined: new Date().toISOString(), progress: 88 },
+  { id: "s19", name: "Pari Shah", email: "pari.s4@school.com", level_id: "g4", status: "pending", joined: new Date().toISOString(), progress: 0 },
+  { id: "s20", name: "Yash Patil", email: "yash.p4@school.com", level_id: "g4", status: "active", joined: new Date().toISOString(), progress: 41 },
+  
+  // Level 5
+  { id: "s21", name: "Sanya Dhillon", email: "sanya.d5@school.com", level_id: "g5", teacher_id: "t6", status: "active", joined: new Date().toISOString(), progress: 95 },
+  { id: "s22", name: "Dev Batra", email: "dev.b5@school.com", level_id: "g5", teacher_id: "t3", status: "active", joined: new Date().toISOString(), progress: 54 },
+  { id: "s23", name: "Mira Saxena", email: "mira.s5@school.com", level_id: "g5", teacher_id: "t1", status: "active", joined: new Date().toISOString(), progress: 77 },
+  { id: "s24", name: "Karan Johar", email: "karan.j5@school.com", level_id: "g5", status: "pending", joined: new Date().toISOString(), progress: 0 },
+  { id: "s25", name: "Jasmine Gill", email: "jasmine.g5@school.com", level_id: "g5", status: "active", joined: new Date().toISOString(), progress: 82 },
+];
+
 const generateLessons = (): Lesson[] => {
   const lessons: Lesson[] = [];
   const moduleData = [
     { 
       id: "m1", 
       name: "Advanced English Composition",
-      lessonNames: ["The Art of Persuasion", "Creative Narrative Writing", "Academic Essay Structure"]
+      lessonNames: [
+        "The Art of Persuasion", "Creative Narrative Writing", "Academic Essay Structure",
+        "Poetry and Metaphor", "Digital Storytelling", "Grammar Mastery",
+        "Public Speaking Basics", "Rhetorical Devices", "Journalistic Writing",
+        "Critical Reading Skills", "Vocabulary Expansion", "Business Communication"
+      ]
     },
     { 
       id: "m2", 
       name: "Foundational Mathematics",
-      lessonNames: ["Number Sense & Operations", "Geometry & Spatial Reasoning", "Data Handling & Probability"]
+      lessonNames: [
+        "Number Sense & Operations", "Geometry & Spatial Reasoning", "Data Handling & Probability",
+        "Algebraic Thinking", "Measurement & Units", "Fractions & Decimals",
+        "Mental Math Strategies", "Word Problem Solving", "Shapes & Symmetry",
+        "Time and Money", "Multiplication Tables", "Introduction to Graphs",
+        "Division Basics", "Prime Numbers", "Weight and Volume"
+      ]
     },
     { 
       id: "m3", 
       name: "Introduction to Life Sciences",
-      lessonNames: ["The World of Plants", "Animal Kingdoms", "Human Body Systems"]
+      lessonNames: [
+        "The World of Plants", "Animal Kingdoms", "Human Body Systems",
+        "Ecosystems and Biomes", "Microbiology Basics", "Genetics Introduction",
+        "Evolutionary Biology", "Environmental Science", "Marine Biology",
+        "Anatomy and Physiology", "Cell Structure", "Photosynthesis Process"
+      ]
     }
   ];
 
@@ -260,6 +313,8 @@ const generateLessons = (): Lesson[] => {
       });
 
       const isSkillLesson = lessonIdx === 2; // Make the 3rd lesson a skill lesson
+      const assignedStudentIds = isSkillLesson ? INITIAL_STUDENTS.filter(s => s.level_id === levelId).slice(0, 3).map(s => s.id) : [];
+      
       lessons.push({
         id: lessonId,
         moduleId: mod.id,
@@ -271,6 +326,8 @@ const generateLessons = (): Lesson[] => {
         chapters,
         isSkillLesson: isSkillLesson,
         starNumber: isSkillLesson ? 3 : undefined,
+        rewardStars: isSkillLesson ? (lessonIdx % 5) + 1 : undefined,
+        assignedStudentIds: assignedStudentIds,
         learningPathId: isSkillLesson ? `lp-${mod.id}` : undefined
       });
     });
@@ -372,14 +429,19 @@ const INITIAL_LEARNING_PATHS: LearningPath[] = [
     description: "A gamified path to becoming a master communicator and creative writer.",
     moduleId: "m1",
     levelIds: ["g4", "g5"],
-    stars: 5,
-    starLessons: ["l-m1-1", "l-m1-2", "l-m1-3", null, null],
+    stars: 10,
+    starLessons: ["l-m1-1", "l-m1-2", "l-m1-3", "l-m1-4", "l-m1-5", "l-m1-6", "l-m1-7", "l-m1-8", "l-m1-9", "l-m1-10"],
     starsData: [
       { star: 1, mainLessonId: "l-m1-1", skillLessonIds: [] },
       { star: 2, mainLessonId: "l-m1-2", skillLessonIds: [] },
       { star: 3, mainLessonId: "l-m1-3", skillLessonIds: [] },
-      { star: 4, mainLessonId: null, skillLessonIds: [] },
-      { star: 5, mainLessonId: null, skillLessonIds: [] }
+      { star: 4, mainLessonId: "l-m1-4", skillLessonIds: [] },
+      { star: 5, mainLessonId: "l-m1-5", skillLessonIds: [] },
+      { star: 6, mainLessonId: "l-m1-6", skillLessonIds: [] },
+      { star: 7, mainLessonId: "l-m1-7", skillLessonIds: [] },
+      { star: 8, mainLessonId: "l-m1-8", skillLessonIds: [] },
+      { star: 9, mainLessonId: "l-m1-9", skillLessonIds: [] },
+      { star: 10, mainLessonId: "l-m1-10", skillLessonIds: [] }
     ],
     createdAt: new Date().toISOString()
   },
@@ -389,14 +451,19 @@ const INITIAL_LEARNING_PATHS: LearningPath[] = [
     description: "Embark on an adventure through the world of numbers and logic.",
     moduleId: "m2",
     levelIds: ["g1", "g2", "g3"],
-    stars: 5,
-    starLessons: ["l-m2-1", "l-m2-2", "l-m2-3", null, null],
+    stars: 10,
+    starLessons: ["l-m2-1", "l-m2-2", "l-m2-3", "l-m2-4", "l-m2-5", "l-m2-6", "l-m2-7", "l-m2-8", "l-m2-9", "l-m2-10"],
     starsData: [
       { star: 1, mainLessonId: "l-m2-1", skillLessonIds: [] },
       { star: 2, mainLessonId: "l-m2-2", skillLessonIds: [] },
       { star: 3, mainLessonId: "l-m2-3", skillLessonIds: [] },
-      { star: 4, mainLessonId: null, skillLessonIds: [] },
-      { star: 5, mainLessonId: null, skillLessonIds: [] }
+      { star: 4, mainLessonId: "l-m2-4", skillLessonIds: [] },
+      { star: 5, mainLessonId: "l-m2-5", skillLessonIds: [] },
+      { star: 6, mainLessonId: "l-m2-6", skillLessonIds: [] },
+      { star: 7, mainLessonId: "l-m2-7", skillLessonIds: [] },
+      { star: 8, mainLessonId: "l-m2-8", skillLessonIds: [] },
+      { star: 9, mainLessonId: "l-m2-9", skillLessonIds: [] },
+      { star: 10, mainLessonId: "l-m2-10", skillLessonIds: [] }
     ],
     createdAt: new Date().toISOString()
   }
@@ -418,6 +485,12 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
   const [editingChapterInEditor, setEditingChapterInEditor] = useState<Chapter | null>(null);
+  
+  // Skill Boost Filters
+  const [skillStudentFilter, setSkillStudentFilter] = useState("");
+  const [skillModuleFilter, setSkillModuleFilter] = useState("");
+  const [skillLevelFilter, setSkillLevelFilter] = useState("");
+  
   const itemsPerPage = 10;
 
   // Modal States
@@ -427,6 +500,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
   const [isLearningPathModalOpen, setIsLearningPathModalOpen] = useState(false);
   const [isQuestionBankModalOpen, setIsQuestionBankModalOpen] = useState(false);
   const [isSkillLessonModalOpen, setIsSkillLessonModalOpen] = useState(false);
+  const [isEditSkillModalOpen, setIsEditSkillModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   
   const [editingModule, setEditingModule] = useState<Module | null>(null);
@@ -545,7 +619,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
           status: 'active', 
           joined: new Date().toISOString(), 
           profile_pic: "https://i.pravatar.cc/150?u=elizabeth", 
-          levelIds: ["g4", "g5"],
+          levelIds: ["g1", "g2", "g3", "g4", "g5"],
           permissions: {
             learning_paths: true,
             skill_based: true,
@@ -579,7 +653,7 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
           status: 'active', 
           joined: new Date().toISOString(), 
           profile_pic: "https://i.pravatar.cc/150?u=sophia", 
-          levelIds: ["g3", "g4", "g5"],
+          levelIds: ["g4", "g5"],
           permissions: {
             learning_paths: true,
             skill_based: true,
@@ -587,6 +661,56 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
             create_learning_paths: false,
             create_skill_based: false,
             invite_students: false
+          }
+        },
+        { 
+          id: "t4", 
+          name: "Mr. David Miller", 
+          email: "david.miller@aquireglobal.com", 
+          status: 'active', 
+          joined: new Date().toISOString(), 
+          profile_pic: "https://i.pravatar.cc/150?u=david", 
+          levelIds: ["g1", "g2"],
+          permissions: {
+            learning_paths: true,
+            skill_based: true,
+            assessments: true,
+            create_learning_paths: true,
+            create_skill_based: true,
+            invite_students: true
+          }
+        },
+        { 
+          id: "t5", 
+          name: "Dr. Sarah Wilson", 
+          email: "sarah.wilson@aquireglobal.com", 
+          status: 'active', 
+          joined: new Date().toISOString(), 
+          profile_pic: "https://i.pravatar.cc/150?u=sarah", 
+          levelIds: ["g3", "g4"],
+          permissions: {
+            learning_paths: true,
+            skill_based: true,
+            assessments: true,
+            create_learning_paths: true,
+            create_skill_based: true,
+            invite_students: true
+          }
+        },
+        { 
+          id: "t6", 
+          name: "Mr. James Anderson", 
+          email: "james.anderson@aquireglobal.com", 
+          status: 'active', 
+          joined: new Date().toISOString(), 
+          levelIds: ["g5"],
+          permissions: {
+            learning_paths: true,
+            skill_based: true,
+            assessments: true,
+            create_learning_paths: true,
+            create_skill_based: true,
+            invite_students: true
           }
         },
       ];
@@ -603,26 +727,8 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
     if (savedStudents) {
       setStudents(JSON.parse(savedStudents));
     } else {
-      // Seed Data for Students
-      const seedStudents: Student[] = [
-        { id: "s1", name: "Rahul Sharma", email: "rahul@school.com", level_id: "g5", teacher_id: "t1", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=rahul", progress: 80 },
-        { id: "s2", name: "Aanya Gupta", email: "aanya@school.com", level_id: "g5", teacher_id: "t1", status: "active", joined: new Date().toISOString(), profile_pic: "https://i.pravatar.cc/150?u=aanya", progress: 45 },
-        { id: "s3", name: "Ishaan Verma", email: "ishaan@school.com", level_id: "g5", teacher_id: "t1", status: "pending", joined: new Date().toISOString(), progress: 0 },
-        { id: "s4", name: "Saanvi Reddy", email: "saanvi@school.com", level_id: "g5", teacher_id: "t2", status: "active", joined: new Date().toISOString(), progress: 65 },
-        { id: "s5", name: "Arjun Kapoor", email: "arjun@school.com", level_id: "g5", teacher_id: "t2", status: "inactive", joined: new Date().toISOString(), progress: 30 },
-        { id: "s6", name: "Vivaan Shah", email: "vivaan@school.com", level_id: "g1", teacher_id: "t2", status: "active", joined: new Date().toISOString(), progress: 90 },
-        { id: "s7", name: "Diya Malhotra", email: "diya@school.com", level_id: "g1", teacher_id: "t3", status: "active", joined: new Date().toISOString(), progress: 75 },
-        { id: "s8", name: "Kabir Singh", email: "kabir@school.com", level_id: "g1", teacher_id: "t3", status: "active", joined: new Date().toISOString(), progress: 55 },
-        { id: "s9", name: "Myra Joshi", email: "myra@school.com", level_id: "g8", status: "pending", joined: new Date().toISOString(), progress: 0 },
-        { id: "s10", name: "Advait Nair", email: "advait@school.com", level_id: "g8", status: "pending", joined: new Date().toISOString(), progress: 0 },
-        { id: "s11", name: "Kiara Bose", email: "kiara@school.com", level_id: "g8", status: "pending", joined: new Date().toISOString(), progress: 0 },
-        { id: "s12", name: "Reyansh Goel", email: "reyansh@school.com", level_id: "g8", status: "pending", joined: new Date().toISOString(), progress: 0 },
-        { id: "s13", name: "Zoya Khan", email: "zoya@school.com", level_id: "g10", status: "active", joined: new Date().toISOString(), progress: 85 },
-        { id: "s14", name: "Aarav Patel", email: "aarav@school.com", level_id: "g10", status: "active", joined: new Date().toISOString(), progress: 92 },
-        { id: "s15", name: "Ananya Das", email: "ananya@school.com", level_id: "g10", status: "active", joined: new Date().toISOString(), progress: 78 },
-      ];
-      setStudents(seedStudents);
-      localStorage.setItem("aquire_students", JSON.stringify(seedStudents));
+      setStudents(INITIAL_STUDENTS);
+      localStorage.setItem("aquire_students", JSON.stringify(INITIAL_STUDENTS));
     }
 
     if (savedLevels) {
@@ -1195,38 +1301,51 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
     showToast("Curriculum infrastructure created! You can now add content to chapters.", "success");
   };
 
-  const handleSaveSkillLesson = (lessonId: string, data: { isSkillLesson: boolean; learningPathId: string; starNumber: number }) => {
-    const updated = lessons.map(l => l.id === lessonId ? { ...l, ...data } : l);
-    saveLessons(updated);
-    showToast("Skill lesson assignment saved!", "success");
+  const handleSaveSkillLesson = (assignments: { lessonId: string; data: any }[]) => {
+    let updatedLessons = [...lessons];
     
-    // Also update the learning path group if needed
-    const savedLesson = updated.find(l => l.id === lessonId);
-    if (savedLesson && savedLesson.isSkillLesson && savedLesson.learningPathId) {
-      const updatedPaths = learningPaths.map(p => {
-        if (p.id === savedLesson.learningPathId) {
-          const starsData = p.starsData || [];
-          const starIdx = starsData.findIndex(s => s.star === savedLesson.starNumber);
-          
-          if (starIdx > -1) {
-            const updatedStarsData = [...starsData];
-            if (!(updatedStarsData[starIdx].skillLessonIds || []).includes(savedLesson.id)) {
-              updatedStarsData[starIdx].skillLessonIds = [...(updatedStarsData[starIdx].skillLessonIds || []), savedLesson.id];
+    assignments.forEach(assignment => {
+      updatedLessons = updatedLessons.map(l => 
+        l.id === assignment.lessonId ? { ...l, ...assignment.data } : l
+      );
+    });
+    
+    saveLessons(updatedLessons);
+    showToast(`${assignments.length} Skill lesson(s) updated!`, "success");
+    
+    // Update learning paths for each assignment
+    let updatedPaths = [...learningPaths];
+    assignments.forEach(assignment => {
+      const savedLesson = updatedLessons.find(l => l.id === assignment.lessonId);
+      if (savedLesson && savedLesson.isSkillLesson && savedLesson.learningPathId) {
+        updatedPaths = updatedPaths.map(p => {
+          if (p.id === savedLesson.learningPathId) {
+            const starsData = p.starsData || [];
+            const starIdx = starsData.findIndex(s => s.star === savedLesson.starNumber);
+            
+            if (starIdx > -1) {
+              const updatedStarsData = [...starsData];
+              if (!(updatedStarsData[starIdx].skillLessonIds || []).includes(savedLesson.id)) {
+                updatedStarsData[starIdx].skillLessonIds = [...(updatedStarsData[starIdx].skillLessonIds || []), savedLesson.id];
+              }
+              return { ...p, starsData: updatedStarsData };
+            } else {
+              return {
+                ...p,
+                starsData: [...starsData, {
+                  star: savedLesson.starNumber!,
+                  mainLessonId: null,
+                  skillLessonIds: [savedLesson.id]
+                }]
+              };
             }
-            return { ...p, starsData: updatedStarsData };
-          } else {
-            return {
-              ...p,
-              starsData: [...starsData, {
-                star: savedLesson.starNumber!,
-                mainLessonId: null,
-                skillLessonIds: [savedLesson.id]
-              }]
-            };
           }
-        }
-        return p;
-      });
+          return p;
+        });
+      }
+    });
+
+    if (JSON.stringify(updatedPaths) !== JSON.stringify(learningPaths)) {
       saveLearningPaths(updatedPaths);
     }
   };
@@ -1779,6 +1898,24 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
                                           ))}
                                         </div>
                                       )}
+                                      {lesson.learningIntentions && lesson.learningIntentions.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                          {lesson.learningIntentions.map((item, kIdx) => (
+                                            <span key={kIdx} className="text-[8px] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded uppercase tracking-wider border border-blue-100/50">
+                                              LI: {item}
+                                            </span>
+                                          ))}
+                                        </div>
+                                      )}
+                                      {lesson.successCriteria && lesson.successCriteria.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                          {lesson.successCriteria.map((item, kIdx) => (
+                                            <span key={kIdx} className="text-[8px] font-bold px-1.5 py-0.5 bg-indigo-50 text-indigo-600 rounded uppercase tracking-wider border border-indigo-100/50">
+                                              SC: {item}
+                                            </span>
+                                          ))}
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
                                   <div className="flex items-center gap-3">
@@ -1880,7 +2017,14 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
 
   const renderSkills = () => {
     const skillLessons = lessons.filter(l => l.isSkillLesson);
-    const filteredSkills = skillLessons.filter(l => l.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    const filteredSkills = skillLessons.filter(l => {
+      const matchesSearch = l.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesLevel = !skillLevelFilter || l.levelId === skillLevelFilter;
+      const matchesModule = !skillModuleFilter || l.moduleId === skillModuleFilter;
+      const matchesStudent = !skillStudentFilter || l.assignedStudentIds?.includes(skillStudentFilter);
+      return matchesSearch && matchesLevel && matchesModule && matchesStudent;
+    });
     
     return (
       <motion.div 
@@ -1900,10 +2044,10 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
           </div>
           <button 
             onClick={() => setIsSkillLessonModalOpen(true)}
-            className="btn-primary"
+            className="btn-primary flex items-center gap-2"
           >
             <Plus size={20} />
-            Add Skill Lesson
+            Add Skill Boost
           </button>
         </div>
 
@@ -1916,93 +2060,201 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search skill lessons..." 
-              className="w-full pl-12 pr-4 py-4 input-field"
+              className="input-field pl-12 w-full h-14"
             />
+          </div>
+          
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <select 
+              value={skillLevelFilter}
+              onChange={(e) => setSkillLevelFilter(e.target.value)}
+              className="px-4 py-3 rounded-xl bg-white border border-aquire-border text-xs font-bold text-aquire-black outline-none focus:border-aquire-primary"
+            >
+              <option value="">All Levels</option>
+              {levels.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+            </select>
+
+            <select 
+              value={skillModuleFilter}
+              onChange={(e) => setSkillModuleFilter(e.target.value)}
+              className="px-4 py-3 rounded-xl bg-white border border-aquire-border text-xs font-bold text-aquire-black outline-none focus:border-aquire-primary"
+            >
+              <option value="">All Modules</option>
+              {modules.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+            </select>
+
+            <select 
+              value={skillStudentFilter}
+              onChange={(e) => setSkillStudentFilter(e.target.value)}
+              className="px-4 py-3 rounded-xl bg-white border border-aquire-border text-xs font-bold text-aquire-black outline-none focus:border-aquire-primary"
+            >
+              <option value="">All Students</option>
+              {students.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
           </div>
         </div>
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredSkills.map((lesson) => (
             <motion.div
               key={lesson.id}
               layout
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="card p-4 flex items-center gap-6 hover:border-aquire-primary transition-all group"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="card overflow-hidden flex flex-col h-full hover:border-aquire-primary transition-all group"
             >
-              <div className="w-20 h-12 rounded-lg overflow-hidden shrink-0 border border-aquire-border">
+              <div className="aspect-video relative overflow-hidden bg-aquire-grey-light">
                 <img 
                   src={lesson.thumbnail} 
                   alt={lesson.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
                   referrerPolicy="no-referrer"
                 />
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg border border-white/50 flex items-center gap-1 shadow-sm">
+                  <Star size={12} className="text-amber-500" fill="currentColor" />
+                  <span className="text-[10px] font-black text-aquire-black">Star {lesson.starNumber}</span>
+                </div>
               </div>
               
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-[10px] font-black text-aquire-primary uppercase tracking-widest">
-                    {modules.find(m => m.id === lesson.moduleId)?.name || "General"}
-                  </span>
-                  <span className="w-1 h-1 rounded-full bg-aquire-grey-med" />
-                  <span className="text-[10px] font-bold text-aquire-grey-med uppercase tracking-widest">
-                    {lesson.chapters.length} Chapters
-                  </span>
-                  <span className="w-1 h-1 rounded-full bg-aquire-grey-med" />
-                  <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
-                    {levels.find(l => l.id === lesson.levelId)?.name || "Level"}
-                  </span>
+              <div className="p-5 flex-1 flex flex-col gap-4">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-md border border-blue-100">
+                      {modules.find(m => m.id === lesson.moduleId)?.name || "General"}
+                    </span>
+                    <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] font-black uppercase tracking-widest rounded-md border border-emerald-100">
+                      {levels.find(l => l.id === lesson.levelId)?.name || "Level"}
+                    </span>
+                  </div>
+                  <h3 className="text-base font-bold text-aquire-black truncate group-hover:text-aquire-primary transition-colors">
+                    {lesson.name}
+                  </h3>
+                  <p className="text-xs text-aquire-grey-med line-clamp-2 mt-1">
+                    {lesson.description}
+                  </p>
                 </div>
-                <h3 className="text-base font-bold text-aquire-black truncate group-hover:text-aquire-primary transition-colors">
-                  {lesson.name}
-                </h3>
-              </div>
 
-              <div className="hidden md:flex flex-col items-end shrink-0 px-6 border-x border-aquire-border">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-aquire-black">
-                  <Trophy size={14} className="text-amber-500" />
-                  <span>Star {lesson.starNumber}</span>
+                {lesson.assignedStudentIds && lesson.assignedStudentIds.length > 0 && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black text-aquire-grey-med uppercase tracking-widest">Assigned Students</span>
+                      <button 
+                        onClick={() => {
+                          setEditingLesson(lesson);
+                          setIsEditSkillModalOpen(true);
+                        }}
+                        className="text-[10px] font-bold text-aquire-primary hover:underline flex items-center gap-1"
+                      >
+                        <Plus size={10} /> Manage
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {lesson.assignedStudentIds.map(sid => {
+                        const student = students.find(s => s.id === sid);
+                        return (
+                          <span key={sid} className="px-2 py-0.5 bg-aquire-grey-light text-aquire-grey-dark text-[9px] font-bold rounded-md border border-aquire-border/50 flex items-center gap-1">
+                            {student?.name.split(' ')[0]}
+                            <button 
+                              onClick={() => {
+                                const updated = lessons.map(l => {
+                                  if (l.id === lesson.id) {
+                                    return { 
+                                      ...l, 
+                                      assignedStudentIds: l.assignedStudentIds?.filter(id => id !== sid) 
+                                    };
+                                  }
+                                  return l;
+                                });
+                                saveLessons(updated);
+                                showToast("Student removed from assignment", "success");
+                              }}
+                              className="hover:text-red-500"
+                            >
+                              <X size={10} />
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {(!lesson.assignedStudentIds || lesson.assignedStudentIds.length === 0) && (
+                  <div className="pt-2">
+                    <button 
+                      onClick={() => {
+                        setEditingLesson(lesson);
+                        setIsEditSkillModalOpen(true);
+                      }}
+                      className="w-full py-2 border-dashed border-2 border-aquire-border rounded-xl text-[10px] font-bold text-aquire-grey-med hover:border-aquire-primary hover:text-aquire-primary transition-all flex items-center justify-center gap-2"
+                    >
+                      <User size={12} /> Assign Students
+                    </button>
+                  </div>
+                )}
+
+                <div className="pt-4 border-t border-aquire-border flex items-center justify-between mt-auto">
+                  <div className="flex items-center gap-2">
+                    <Trophy size={14} className="text-amber-500" />
+                    <span className="text-[10px] font-black text-aquire-black">{lesson.rewardStars || 1} Stars</span>
+                    <div className="flex items-center gap-0.5 ml-1">
+                      <button 
+                        onClick={() => {
+                          const updated = lessons.map(l => l.id === lesson.id ? { ...l, rewardStars: Math.max(1, (l.rewardStars || 1) - 1) } : l);
+                          saveLessons(updated);
+                        }}
+                        className="w-4 h-4 bg-aquire-grey-light rounded flex items-center justify-center text-[10px] hover:bg-aquire-border"
+                      >
+                        -
+                      </button>
+                      <button 
+                        onClick={() => {
+                          const updated = lessons.map(l => l.id === lesson.id ? { ...l, rewardStars: Math.min(5, (l.rewardStars || 1) + 1) } : l);
+                          saveLessons(updated);
+                        }}
+                        className="w-4 h-4 bg-aquire-grey-light rounded flex items-center justify-center text-[10px] hover:bg-aquire-border"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button 
+                      onClick={() => {
+                        setPreviewLesson(lesson);
+                        setPreviewChapterIndex(0);
+                        setIsPreviewOpen(true);
+                      }}
+                      className="p-2 hover:bg-aquire-grey-light rounded-xl text-aquire-grey-med hover:text-aquire-primary transition-all"
+                      title="Preview"
+                    >
+                      <Eye size={18} />
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setEditingLesson(lesson);
+                        setIsLessonModalOpen(true);
+                      }}
+                      className="p-2 hover:bg-aquire-grey-light rounded-xl text-aquire-grey-med hover:text-aquire-primary transition-all"
+                      title="Edit Metadata"
+                    >
+                      <Edit size={18} />
+                    </button>
+                    <button 
+                      onClick={() => {
+                        const updated = lessons.map(l => 
+                          l.id === lesson.id ? { ...l, isSkillLesson: false, learningPathId: undefined, starNumber: undefined } : l
+                        );
+                        saveLessons(updated);
+                        showToast("Skill lesson removed", "success");
+                      }}
+                      className="p-2 hover:bg-red-50 text-aquire-grey-med hover:text-red-500 transition-all"
+                      title="Remove Skill Assignment"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
-                <span className="text-[10px] font-medium text-aquire-grey-med italic">
-                  {learningPaths.find(p => p.id === lesson.learningPathId)?.name}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0">
-                <button 
-                  onClick={() => {
-                    setPreviewLesson(lesson);
-                    setPreviewChapterIndex(0);
-                    setIsPreviewOpen(true);
-                  }}
-                  className="p-2 hover:bg-aquire-grey-light rounded-xl text-aquire-grey-med hover:text-aquire-primary transition-all"
-                  title="Preview"
-                >
-                  <Eye size={18} />
-                </button>
-                <button 
-                  onClick={() => {
-                    setEditingLesson(lesson);
-                    setIsLessonModalOpen(true);
-                  }}
-                  className="p-2 hover:bg-aquire-grey-light rounded-xl text-aquire-grey-med hover:text-aquire-primary transition-all"
-                  title="Edit"
-                >
-                  <Edit size={18} />
-                </button>
-                <button 
-                  onClick={() => {
-                    const updated = lessons.map(l => 
-                      l.id === lesson.id ? { ...l, isSkillLesson: false, learningPathId: undefined, starNumber: undefined } : l
-                    );
-                    saveLessons(updated);
-                    showToast("Skill lesson removed", "success");
-                  }}
-                  className="p-2 hover:bg-red-50 text-aquire-grey-med hover:text-red-500 transition-all"
-                  title="Remove Skill Assignment"
-                >
-                  <Trash2 size={18} />
-                </button>
               </div>
             </motion.div>
           ))}
@@ -3943,6 +4195,21 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
         lessons={lessons}
         learningPaths={learningPaths}
         levels={levels}
+        students={students}
+      />
+
+      <SkillLessonModal
+        isOpen={isEditSkillModalOpen}
+        onClose={() => {
+          setIsEditSkillModalOpen(false);
+          setEditingLesson(null);
+        }}
+        onSave={handleSaveSkillLesson}
+        modules={modules}
+        lessons={lessons.filter(l => editingLesson && l.id === editingLesson.id)}
+        learningPaths={learningPaths}
+        levels={levels}
+        students={students}
       />
 
       <CurriculumWizard 

@@ -280,6 +280,34 @@ export default function LearningPathZigZagPreview({ path, lessons, onClose }: Le
                                 </div>
                               </div>
                             )}
+
+                            {mainLesson?.learningIntentions && mainLesson.learningIntentions.length > 0 && (
+                                <div className="pt-4 border-t border-aquire-border">
+                                  <h4 className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-3">Learning Intentions</h4>
+                                  <ul className="space-y-1.5">
+                                    {mainLesson.learningIntentions.map((item, idx) => (
+                                      <li key={idx} className="text-[11px] text-aquire-grey-dark flex gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1 flex-shrink-0" />
+                                        {item}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                            )}
+
+                            {mainLesson?.successCriteria && mainLesson.successCriteria.length > 0 && (
+                                <div className="pt-4 border-t border-aquire-border">
+                                  <h4 className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-3">Success Criteria</h4>
+                                  <ul className="space-y-1.5">
+                                    {mainLesson.successCriteria.map((item, idx) => (
+                                      <li key={idx} className="text-[11px] text-aquire-grey-dark flex gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1 flex-shrink-0" />
+                                        {item}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                            )}
                           </div>
                         </div>
                       </motion.div>
