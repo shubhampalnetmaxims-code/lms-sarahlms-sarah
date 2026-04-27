@@ -26,6 +26,8 @@ interface CurriculumWizardProps {
       name: string;
       description: string;
       successKPIs: string[];
+      learningIntentions: string[];
+      successCriteria: string[];
       chapters: string[]; // only names for now
     }[];
   }) => void;
@@ -49,8 +51,10 @@ export default function CurriculumWizard({ isOpen, onClose, onSave, levels }: Cu
     name: string;
     description: string;
     successKPIs: string[];
+    learningIntentions: string[];
+    successCriteria: string[];
     chapters: string[];
-  }[]>([{ name: "", description: "", successKPIs: [], chapters: [""] }]);
+  }[]>([{ name: "", description: "", successKPIs: [], learningIntentions: [], successCriteria: [], chapters: [""] }]);
 
   const [errors, setErrors] = useState<any>({});
 
@@ -83,7 +87,14 @@ export default function CurriculumWizard({ isOpen, onClose, onSave, levels }: Cu
       const current = [...lessonsData];
       if (numLessons > current.length) {
         for (let i = current.length; i < numLessons; i++) {
-          current.push({ name: "", description: "", successKPIs: [], chapters: [""] });
+          current.push({ 
+            name: "", 
+            description: "", 
+            successKPIs: [], 
+            learningIntentions: [], 
+            successCriteria: [], 
+            chapters: [""] 
+          });
         }
       } else {
         current.length = numLessons;
@@ -110,7 +121,14 @@ export default function CurriculumWizard({ isOpen, onClose, onSave, levels }: Cu
     setStep(1);
     setModuleInfo({ name: "", description: "", levelIds: [] });
     setNumLessons(1);
-    setLessonsData([{ name: "", description: "", successKPIs: [], chapters: [""] }]);
+    setLessonsData([{ 
+      name: "", 
+      description: "", 
+      successKPIs: [], 
+      learningIntentions: [], 
+      successCriteria: [], 
+      chapters: [""] 
+    }]);
   };
 
   const addKPI = (lessonIndex: number, kpi: string) => {
@@ -358,6 +376,34 @@ export default function CurriculumWizard({ isOpen, onClose, onSave, levels }: Cu
                                 placeholder="Explain what this lesson covers..."
                               />
                               {errors[`lesson_${lIdx}_desc`] && <p className="text-red-500 text-[10px] ml-1">{errors[`lesson_${lIdx}_desc`]}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="text-xs font-bold text-aquire-grey-med uppercase tracking-tighter">Learning Intention (Optional)</label>
+                              <textarea
+                                value={lesson.learningIntentions.join("\n")}
+                                onChange={(e) => {
+                                  const updated = [...lessonsData];
+                                  updated[lIdx].learningIntentions = e.target.value.split("\n").filter(val => val.trim() !== "");
+                                  setLessonsData(updated);
+                                }}
+                                className="w-full p-4 bg-white border border-aquire-border rounded-xl h-20 resize-none focus:ring-2 focus:ring-aquire-primary/20 outline-none transition-all text-sm"
+                                placeholder="What is the goal of this lesson? (One per line)"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="text-xs font-bold text-aquire-grey-med uppercase tracking-tighter">Success Criteria (Optional)</label>
+                              <textarea
+                                value={lesson.successCriteria.join("\n")}
+                                onChange={(e) => {
+                                  const updated = [...lessonsData];
+                                  updated[lIdx].successCriteria = e.target.value.split("\n").filter(val => val.trim() !== "");
+                                  setLessonsData(updated);
+                                }}
+                                className="w-full p-4 bg-white border border-aquire-border rounded-xl h-20 resize-none focus:ring-2 focus:ring-aquire-primary/20 outline-none transition-all text-sm"
+                                placeholder="How will students know they've succeeded? (One per line)"
+                              />
                             </div>
                           </div>
 

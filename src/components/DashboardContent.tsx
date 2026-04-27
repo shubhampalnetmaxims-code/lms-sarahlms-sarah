@@ -1260,6 +1260,8 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
       name: string;
       description: string;
       successKPIs: string[];
+      learningIntentions: string[];
+      successCriteria: string[];
       chapters: string[];
     }[];
   }) => {
@@ -1290,6 +1292,8 @@ export default function DashboardContent({ activeTab, showToast }: DashboardCont
         name: lessonData.name,
         description: lessonData.description,
         successKPIs: lessonData.successKPIs,
+        learningIntentions: lessonData.learningIntentions,
+        successCriteria: lessonData.successCriteria,
         thumbnail: `https://picsum.photos/seed/${lessonId}/800/600`,
         chapters: chapters,
         createdAt: new Date().toISOString(),
